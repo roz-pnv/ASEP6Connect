@@ -13,19 +13,36 @@ main {
 .site-header {
   background: linear-gradient(to right, #4B0082, #6A5ACD);
   color: white;
-  padding: 20px;
+  padding: 20px 30px;
 }
 
-.header-content {
+.header-top {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.site-title {
+  font-size: 28px;
+  margin: 0;
+  font-weight: bold;
+}
+
+.header-bottom {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.header-nav {
+  display: flex;
+  gap: 12px;
   align-items: center;
   flex-wrap: wrap;
 }
 
-nav {
-  display: flex;
-  gap: 12px;
+.welcome-msg {
+  font-weight: bold;
+  margin-right: 10px;
 }
 
 .header-btn {
