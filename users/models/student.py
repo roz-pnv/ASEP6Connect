@@ -40,10 +40,6 @@ class Student(models.Model):
         max_length=100,
         help_text="Student's academic field or major"
     )
-    country_of_origin = models.CharField(
-        max_length=100,
-        help_text="Country the student is coming from"
-    )
     arrival_date = models.DateField(
         help_text="Date the student arrived"
     )
@@ -70,7 +66,6 @@ class Student(models.Model):
         verbose_name_plural = 'Student Profiles'
         indexes = [
 			models.Index(fields=['arrival_date']),
-			models.Index(fields=['country_of_origin']),
 			models.Index(fields=['state']),
 			models.Index(fields=['guidance_needed']),
 			models.Index(fields=['in_person_assistance']),

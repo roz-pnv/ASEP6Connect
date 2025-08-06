@@ -2,10 +2,23 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 
+
+class Country(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = 'Country'
+        verbose_name_plural = 'Countries'
+
+
 class GenderChoices(models.TextChoices):
     MALE = 'male', 'Male'
     FEMALE = 'female', 'Female'
     OTHER = 'other', 'Other'
+    
     
 class User(AbstractUser):
     first_name = models.CharField(
@@ -44,6 +57,13 @@ class User(AbstractUser):
     email = models.EmailField(
         unique=True,
         help_text="User's email address (must be unique)"
+    )
+    country_of_origin = models.ForeignKey(
+        Country,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=False,
+        help_text="User's country of origin"
     )
     address = models.TextField(
         blank=True,
