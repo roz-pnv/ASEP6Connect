@@ -1,0 +1,12 @@
+<header class="site-header">
+  <div class="header-content">
+    <h1>ASEP6 Paris — International Students Welcome</h1>
+    <nav>
+      {% if user.is_authenticated %}
+      <p>Welcome back!</p>
+      {% else %}
+        <a href="{% url 'register' %}" class="header-btn">Join ASEP6</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>

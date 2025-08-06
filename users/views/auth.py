@@ -1,6 +1,9 @@
 from django.contrib.auth import login
+from django.contrib.auth import logout
 from django.contrib import messages
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import FormView
 
 from users.forms.auth import SimpleRegistrationForm
@@ -16,4 +19,10 @@ class UserRegistrationView(FormView):
         messages.success(self.request, "Registration successful! Welcome.")
         return super().form_valid(form)
 
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        messages.success(request, "You have been logged out.")
+        return redirect('home')
     
