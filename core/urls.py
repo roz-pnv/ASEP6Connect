@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path
+from django.urls import include
 from django.views.generic import TemplateView
 
 from users.views.auth import UserRegistrationView
@@ -12,4 +13,5 @@ urlpatterns = [
 	path('register/', UserRegistrationView.as_view(), name='register'),
 	path('login/', LoginView.as_view(), name='login'),
 	path('logout/', LogoutView.as_view(), name='logout'),
+	path('user/', include('users.urls')),  
 ]

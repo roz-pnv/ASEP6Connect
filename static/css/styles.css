@@ -10,6 +10,24 @@ main {
 }
 
 /* Header */
+.site-title-link {
+  color: white !important;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.site-title-link:hover {
+  text-decoration: none;
+  color: white;
+}
+
+.site-title {
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0;
+}
+
 .site-header {
   background: linear-gradient(to right, #4B0082, #6A5ACD);
   color: white;
@@ -121,12 +139,50 @@ button[type="submit"]:hover {
   background-color: #5c0db3;
 }
 
-/* Links */
-a {
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  background: linear-gradient(to bottom, #4B0082, #6A5ACD);
+  color: white;
+  padding: 20px;
+  font-weight: bold;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  padding: 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.sidebar li:hover,
+.sidebar li.active {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+
+.tab-content {
+  flex-grow: 1;
+  padding: 30px;
+  background-color: #f8f9fa;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
   display: block;
-  text-align: center;
-  margin-top: 15px;
-  font-size: 14px;
-  color: #4B0082;
-  text-decoration: none;
 }

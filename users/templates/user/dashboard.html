@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard">
+  <aside class="sidebar">
+    <ul>
+      <li class="tab-link active" data-tab="info">My Info</li>
+    </ul>
+  </aside>
+
+  <section class="tab-content">
+    <!-- User Info Tab -->
+    <div id="info" class="tab-pane active">
+      <h2>Welcome, {{ user.username }}</h2>
+      <h4>Personal Information</h4>
+      <ul>
+        <li>Email: {{ user.email }}</li>
+        <li>Full Name: {{ user.first_name }} {{ user.last_name }}</li>
+        <li>Gender: {{ user.get_gender_display }}</li>
+		<li>Country of Origin: {{ student_profile.country_of_origin }}</li>
+        <li>Job: {{ user.job }}</li>
+        <li>Address: {{ user.address }}</li>
+        <li>Language: {{ user.language }}</li>
+        <li>Birthdate: {{ user.birthdate }}</li>
+      </ul>
+
+      {% if student_profile %}
+      <h4>Student Information</h4>
+      <ul>
+        <li>Field of Study: {{ student_profile.field_of_study }}</li>
+        <li>Arrival Date: {{ student_profile.arrival_date }}</li>
+        <li>Accommodation: {{ student_profile.accommodation_type }}</li>
+      </ul>
+      {% endif %}
+
+      <a href="{% url 'profile_update' %}" class="btn btn-primary mt-3">Update Profile</a>
+    </div>
+  </section>
+</div>
+
+<!-- Tab Switching Script -->
+<script>
+  document.querySelectorAll('.tab-link').forEach(link => {
+    link.addEventListener('click', () => {
+      // Switch active tab
+      document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+
+      // Switch tab content
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+      document.getElementById(link.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+{% endblock %}

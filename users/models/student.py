@@ -5,12 +5,6 @@ from django.contrib.auth import get_user_model
 
 Users = get_user_model()
 
-class StudentState(models.TextChoices):
-    GUIDED = 'Guided', 'Guided'
-    WAITING = 'Waiting', 'Waiting'
-    NOT_REGISTERED = 'NotRegistered', 'Not Registered'
-
-
 class AccommodationType(models.TextChoices):
     DORMITORY = 'Dormitory', 'Dormitory'
     TEMPORARY = 'Temporary Housing', 'Temporary Housing'
@@ -25,11 +19,6 @@ class Student(models.Model):
         related_name='student_profiles',
         help_text="The user account associated with this student"
     )
-    state = models.CharField(
-        max_length=20, 
-        choices=StudentState.choices,
-        help_text="Guidance status of the student (Guided, Waiting, Not Registered)"
-    )
     accommodation_type = models.CharField(
         max_length=50, 
         choices=AccommodationType.choices, 
@@ -41,15 +30,9 @@ class Student(models.Model):
         help_text="Student's academic field or major"
     )
     arrival_date = models.DateField(
+        null=True, 
+        blank=True,
         help_text="Date the student arrived"
-    )
-    guidance_needed = models.BooleanField(
-        default=False,
-        help_text="Does the student need guidance?"
-    )
-    in_person_assistance = models.BooleanField(
-        default=False,
-        help_text="Has the student requested in-person assistance?"
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -66,9 +49,6 @@ class Student(models.Model):
         verbose_name_plural = 'Student Profiles'
         indexes = [
 			models.Index(fields=['arrival_date']),
-			models.Index(fields=['state']),
-			models.Index(fields=['guidance_needed']),
-			models.Index(fields=['in_person_assistance']),
 		]
         
     @property

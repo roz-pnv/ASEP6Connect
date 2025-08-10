@@ -1,9 +1,12 @@
 <header class="site-header">
   <div class="header-top">
-    <h1 class="site-title">ASEP6 Paris — International Students Welcome</h1>
+    <a href="{% url 'home' %}" class="site-title-link">
+      <h1 class="site-title">ASEP6 Paris — International Students Welcome</h1>
+    </a>
   </div>
   <nav class="header-nav">
     {% if user.is_authenticated %}
+      <a href="{% url 'dashboard' %}" class="header-btn">Dashboard</a>
       <a href="{% url 'logout' %}" class="header-btn">Logout</a>
     {% else %}
       <a href="{% url 'login' %}" class="header-btn">Login</a>
