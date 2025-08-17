@@ -2,6 +2,7 @@ from django import forms
 
 from users.models import User
 from users.models import Student
+from users.models import Membership
 from users.models.user import Country
 
 class UserUpdateForm(forms.ModelForm):
@@ -44,3 +45,11 @@ class StudentUpdateForm(forms.ModelForm):
             'arrival_date': forms.DateInput(attrs={'type': 'date'}),
         }
 
+
+class MembershipRequestForm(forms.ModelForm):
+    class Meta:
+        model = Membership
+        fields = ['member_type']
+        widgets = {
+            'member_type': forms.Select(attrs={'class': 'form-control'})
+        }
