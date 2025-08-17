@@ -173,6 +173,15 @@ button[type="submit"]:hover {
 }
 
 
+.sidebar li a,
+.sidebar li a:visited,
+.sidebar li a:hover,
+.sidebar li a:active {
+  color: white !important;
+  text-decoration: none !important;
+}
+
+
 .tab-content {
   flex-grow: 1;
   padding: 30px;

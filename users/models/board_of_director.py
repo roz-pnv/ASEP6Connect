@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 Users = get_user_model()
 
@@ -56,8 +57,7 @@ class BoardOfDirector(models.Model):
     @property
     def is_active(self):
         """Check if the board role is currently active."""
-        from datetime import datetime
-        now = datetime.now()
+        now = timezone.now()
         return (
             not self.is_suspended and
             self.start_date <= now and

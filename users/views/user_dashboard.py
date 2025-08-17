@@ -12,23 +12,58 @@ from users.forms.user_dashboard import StudentUpdateForm
 from users.forms.user_dashboard import MembershipRequestForm
 from users.models import Student
 from users.models import Membership
+from users.models import BoardOfDirector
+from users.models.board_of_director import RoleType
 
 
+# class UserDashboardView(LoginRequiredMixin, TemplateView):
+#     template_name = 'user/dashboard.html'
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+        
+#         # Student Profile
+#         context['student_profile'] = None
+#         if self.request.user.is_student:
+#             context['student_profile'] = Student.objects.filter(user=self.request.user).first()
+        
+#         # Latest Membership
+#         context['membership'] = Membership.objects.filter(user=self.request.user).order_by('-created_at').first()
+        
+#         context['membership_history'] = Membership.objects.filter(user=self.request.user).order_by('-created_at')
+
+#         return context
+    
 class UserDashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'user/dashboard.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
+        user = self.request.user
+
         # Student Profile
         context['student_profile'] = None
-        if self.request.user.is_student:
-            context['student_profile'] = Student.objects.filter(user=self.request.user).first()
-        
+        if user.is_student:
+            context['student_profile'] = Student.objects.filter(user=user).first()
+
         # Latest Membership
-        context['membership'] = Membership.objects.filter(user=self.request.user).order_by('-created_at').first()
-        
-        context['membership_history'] = Membership.objects.filter(user=self.request.user).order_by('-created_at')
+        context['membership'] = Membership.objects.filter(user=user).order_by('-created_at').first()
+        context['membership_history'] = Membership.objects.filter(user=user).order_by('-created_at')
+
+        # Active Board Role (if any)
+        active_role = (
+            BoardOfDirector.objects.filter(user=user)
+            .order_by('-start_date')
+            .first()
+        )
+        if active_role and active_role.is_active:
+            context['board_role'] = active_role.role_type
+
+        # Simple flags for template
+        context['is_secretary'] = context.get('board_role') == RoleType.SECRETARY
+        context['is_treasurer'] = context.get('board_role') == RoleType.TREASURER
+        context['is_president'] = context.get('board_role') == RoleType.PRESIDENT
+        context['is_vice_president'] = context.get('board_role') == RoleType.VICE_PRESIDENT
 
         return context
 

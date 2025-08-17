@@ -11,11 +11,26 @@
         {% endif %}
         <li class="tab-link" data-tab="membership-info">Membership Info</li>
       </ul>
+
+      {% if board_role %}
+      <li class="main-link" data-parent="board-panel">Board Panel</li>
+      <ul class="submenu" id="board-panel-submenu" style="display:none;">
+        {% if is_secretary %}
+          <li><a href="#">Membership Requests</a></li>
+        {% endif %}
+        {% if is_treasurer %}
+          <li><a href="#">Manage Transactions</a></li>
+        {% endif %}
+        {% if is_president or is_vice_president %}
+          <li><a href="#">Organization Reports</a></li>
+        {% endif %}
+      </ul>
+      {% endif %}
     </ul>
   </aside>
 
   <section class="tab-content">
-	{% if messages %}
+    {% if messages %}
       {% for message in messages %}
         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
           {{ message }}
@@ -83,7 +98,6 @@
         {% endif %}
       </div>
 
-      <!-- Membership History Section -->
       {% if membership_history %}
         <hr>
         <h5 class="mt-4">Membership History</h5>
@@ -94,7 +108,7 @@
               <th>Status</th>
               <th>Requested On</th>
               <th>Expiry Date</th>
-			  <th>Can Vote</th>
+              <th>Can Vote</th>
             </tr>
           </thead>
           <tbody>
@@ -109,8 +123,8 @@
                   {% endif %}
                 </td>
                 <td>{{ m.created_at|date:"Y-m-d" }}</td>
-                <td>{{ m.membership_expiry|default:"Not set"|date:"Y-m-d"}}</td>
-				<th>{{ m.can_vote }}</th>
+                <td>{{ m.membership_expiry|default:"Not set"|date:"Y-m-d" }}</td>
+                <td>{{ m.can_vote }}</td>
               </tr>
             {% endfor %}
           </tbody>
@@ -121,7 +135,7 @@
 </div>
 
 <script>
-  // Toggle My Info submenu
+  // Toggle My Info & Board Panel submenus
   document.querySelectorAll('.main-link').forEach(main => {
     main.addEventListener('click', () => {
       const submenu = document.getElementById(main.dataset.parent + '-submenu');
