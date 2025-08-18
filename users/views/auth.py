@@ -27,7 +27,6 @@ class UserRegistrationView(FormView):
         return super().form_invalid(form)
 
 
-
 class LoginView(View):
     def get(self, request):
         form = AuthenticationForm()

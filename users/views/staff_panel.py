@@ -1,4 +1,5 @@
 from datetime import timedelta
+from datetime import date
 
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
@@ -98,7 +99,23 @@ class UserListView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMixin
         q = self.request.GET.get("q")
         role = self.request.GET.get("role")
         country = self.request.GET.get("country")
-        last_seen = self.request.GET.get("last_seen")
+        member_type = self.request.GET.get("member_type")
+        is_student = self.request.GET.get("is_student")
+        joined_after = self.request.GET.get("joined_after")
+        joined_before = self.request.GET.get("joined_before")
+
+        if joined_after:
+            qs = qs.filter(created_at__date__gte=joined_after)
+        if joined_before:
+            qs = qs.filter(created_at__date__lte=joined_before)
+            
+        if is_student == "true":
+            qs = qs.filter(is_student=True)
+        elif is_student == "false":
+            qs = qs.filter(is_student=False)
+
+        if member_type:
+            qs = qs.filter(memberships__member_type=member_type)
 
         if q:
             qs = qs.filter(Q(username__icontains=q) | Q(email__icontains=q))
@@ -108,14 +125,6 @@ class UserListView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMixin
 
         if country:
             qs = qs.filter(country_of_origin__name__iexact=country)
-
-        if last_seen:
-            try:
-                days = int(last_seen)
-                threshold = timezone.now() - timedelta(days=days)
-                qs = qs.filter(last_login__lt=threshold)
-            except ValueError:
-                pass
 
         return qs.distinct()
     
