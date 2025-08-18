@@ -181,7 +181,6 @@ button[type="submit"]:hover {
   text-decoration: none !important;
 }
 
-
 .tab-content {
   flex-grow: 1;
   padding: 30px;
@@ -194,4 +193,27 @@ button[type="submit"]:hover {
 
 .tab-pane.active {
   display: block;
+}
+
+.sidebar-right {
+  width: 280px;
+  background-color: #f8f9fa;
+  border-left: 1px solid #ddd;
+  padding: 20px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100%;
+  z-index: 1000;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+
+.sidebar-right.active {
+  transform: translateX(0);
+}
+
+.tab-content.with-sidebar {
+  margin-right: 280px; 
+  transition: margin-right 0.3s ease;
 }

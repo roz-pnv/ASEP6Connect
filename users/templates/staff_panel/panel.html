@@ -1,0 +1,64 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="dashboard d-flex">
+
+  <!-- Left Sidebar -->
+  <aside class="sidebar sidebar-left">
+  <a href="{% url 'staff_panel' %}" class="site-title-link">
+    <h4 class="mb-4">Board Panel</h4>
+  </a>
+	<ul>
+      {% if is_secretary %}
+        <li><a href="#">Membership Requests</a></li>
+        <li><a href="{% url 'user_list' %}">Manage Users</a></li>
+      {% endif %}
+
+      {% if is_treasurer %}
+        <li><a href="#">Manage Transactions</a></li>
+      {% endif %}
+
+      {% if is_president or is_vice_president %}
+        <li><a href="#">Organization Reports</a></li>
+        <li><a href="{% url 'user_list' %}">Manage Users</a></li>
+      {% endif %}
+    </ul>
+	</aside>
+
+
+  <!-- Main Content -->
+  <div class="main-content-wrapper flex-grow-1 d-flex">
+
+    <!-- Main Section -->
+    <main class="main-content flex-grow-1 {% block main_class %}{% endblock %}">
+      <div class="d-flex justify-content-between align-items-center mb-4 px-3">
+        <h2 class="fw-bold text-purple">{% block page_title %}Board Panel{% endblock %}</h2>
+        <div class="d-flex gap-2">
+          {% block action_buttons %}
+          <!-- Default buttons -->
+          {% endblock %}
+        </div>
+      </div>
+
+      <div class="tab-content px-3">
+        {% block main_content %}
+        <!-- Page-specific content -->
+        {% endblock %}
+      </div>
+    </main>
+
+    <!-- Right Sidebar (optional) -->
+    {% block right_sidebar %}
+    <!-- Only shown in user_list.html -->
+    {% endblock %}
+
+  </div>
+</div>
+
+{% block extra_scripts %}
+<!-- Optional scripts -->
+{% endblock %}
+
+{% endblock %}

@@ -11,21 +11,9 @@
         {% endif %}
         <li class="tab-link" data-tab="membership-info">Membership Info</li>
       </ul>
-
-      {% if board_role %}
-      <li class="main-link" data-parent="board-panel">Board Panel</li>
-      <ul class="submenu" id="board-panel-submenu" style="display:none;">
-        {% if is_secretary %}
-          <li><a href="#">Membership Requests</a></li>
-        {% endif %}
-        {% if is_treasurer %}
-          <li><a href="#">Manage Transactions</a></li>
-        {% endif %}
-        {% if is_president or is_vice_president %}
-          <li><a href="#">Organization Reports</a></li>
-        {% endif %}
-      </ul>
-      {% endif %}
+	  {% if board_role %}
+		<li><a href="{% url 'staff_panel' %}">Board Panel</a></li>
+	  {% endif %}
     </ul>
   </aside>
 

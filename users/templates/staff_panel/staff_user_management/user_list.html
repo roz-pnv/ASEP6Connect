@@ -1,0 +1,119 @@
+{% extends "staff_panel/panel.html" %}
+
+{% block page_title %}👥 User Management{% endblock %}
+
+{% block action_buttons %}
+<a href="{% url 'user_add' %}" class="header-btn">➕ Add User</a>
+<button id="toggleFilter" class="header-btn">🔍 Filter</button>
+{% endblock %}
+
+{% block main_class %}with-sidebar{% endblock %}
+
+{% block main_content %}
+<div class="table-responsive">
+  <table class="table table-hover align-middle purple-table w-100">
+    <thead class="table-purple">
+      <tr>
+        <th>Username</th>
+        <th>Display Name</th>
+        <th>Posts</th>
+        <th>Role</th>
+        <th>Last Order</th>
+        <th>Last Seen</th>
+        <th>Country</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td>{{ user.username }}</td>
+        <td>{{ user.get_full_name }}</td>
+        <td>{{ user.posts.count }}</td>
+        <td>{{ user.get_role_display }}</td>
+        <td>{% if user.last_order %}{{ user.last_order|date:"Y-m-d" }}{% else %}<span class="text-muted">—</span>{% endif %}</td>
+        <td>{% if user.last_login %}{{ user.last_login|timesince }} ago{% else %}<span class="text-muted">Never</span>{% endif %}</td>
+        <td>{{ user.country_of_origin }}</td>
+        <td>
+          <a href="{% url 'user_edit' user.id %}" class="btn btn-sm btn-warning">Edit</a>
+          <a href="{% url 'user_delete' user.id %}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="8" class="text-center text-muted">No users found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block right_sidebar %}
+<aside class="sidebar sidebar-right">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">🔎 Filter Users</h4>
+    <button id="closeFilter" class="btn btn-sm btn-outline-danger" title="Close">✖</button>
+  </div>
+  <form method="get" class="d-grid gap-3">
+    <input type="text" name="q" class="form-control" placeholder="Search username or email" value="{{ request.GET.q }}">
+
+    <select name="role" class="form-select">
+      <option value="">All Roles</option>
+      {% for value, label in role_types %}
+        <option value="{{ value }}" {% if request.GET.role == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+
+    <select name="member_type" class="form-select">
+      <option value="">All Member Types</option>
+      {% for value, label in member_types %}
+        <option value="{{ value }}" {% if request.GET.member_type == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+
+    <select name="country" class="form-select">
+      <option value="">All Countries</option>
+      {% for c in countries %}
+        <option value="{{ c.name }}" {% if request.GET.country == c.name %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+
+    <select name="last_seen" class="form-select">
+      <option value="">Any Last Seen</option>
+      <option value="10" {% if request.GET.last_seen == "10" %}selected{% endif %}>More than 10 days ago</option>
+      <option value="30" {% if request.GET.last_seen == "30" %}selected{% endif %}>More than 30 days ago</option>
+    </select>
+
+    <select name="is_student" class="form-select">
+      <option value="">All Users</option>
+      <option value="true" {% if request.GET.is_student == "true" %}selected{% endif %}>Students Only</option>
+      <option value="false" {% if request.GET.is_student == "false" %}selected{% endif %}>Non-Students Only</option>
+    </select>
+
+    <div class="d-grid gap-2">
+      <button type="submit" class="btn btn-primary">Apply Filters</button>
+      <a href="{% url 'user_list' %}" class="btn btn-outline-secondary">Reset</a>
+    </div>
+  </form>
+</aside>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggleBtn = document.getElementById("toggleFilter");
+    const closeBtn = document.getElementById("closeFilter");
+    const sidebar = document.querySelector(".sidebar-right");
+    const mainContent = document.querySelector(".main-content");
+
+    function toggleSidebar() {
+      sidebar.classList.toggle("active");
+      mainContent.classList.toggle("with-sidebar");
+    }
+
+    if (toggleBtn) toggleBtn.addEventListener("click", toggleSidebar);
+    if (closeBtn) closeBtn.addEventListener("click", toggleSidebar);
+  });
+</script>
+{% endblock %}
