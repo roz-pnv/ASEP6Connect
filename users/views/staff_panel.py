@@ -8,6 +8,7 @@ from django.views.generic import CreateView
 from django.views.generic import UpdateView 
 from django.views.generic import DeleteView
 from django.views.generic import TemplateView
+from django.views.generic import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db.models import Q
@@ -116,6 +117,13 @@ class UserListView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMixin
         context["role_types"] = RoleType.choices
         context["member_types"] = MemberType.choices
         return context
+
+
+class UserDetailView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMixin, DetailView):
+    model = User
+    template_name = "staff_panel/staff_user_management/user_detail.html"
+    context_object_name = "user"
+    pk_url_kwarg = "user_id"
 
 
 class UserUpdateView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMixin, UpdateView):

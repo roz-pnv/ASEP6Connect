@@ -1,0 +1,23 @@
+{% extends "staff_panel/panel.html" %}
+
+{% block page_title %}👤 {{ user.username }}{% endblock %}
+
+{% block action_buttons %}
+<a href="{% url 'user_edit' user.id %}" class="btn btn-warning">Edit</a>
+<a href="{% url 'user_delete' user.id %}" class="btn btn-danger">Delete</a>
+<a href="{% url 'user_list' %}" class="btn btn-secondary">← Back to List</a>
+{% endblock %}
+
+{% block main_content %}
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">{{ user.get_full_name }}</h5>
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Student:</strong> {{ user.is_student|yesno:"Yes,No" }}</p>
+    <p><strong>Board Member:</strong> {{ user.is_boardofdirector|yesno:"Yes,No" }}</p>
+    <p><strong>Country:</strong> {{ user.country_of_origin.name|default:"—" }}</p>
+    <p><strong>Last Login:</strong> {{ user.last_login|date:"Y-m-d H:i" }}</p>
+  </div>
+</div>
+{% endblock %}
