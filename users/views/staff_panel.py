@@ -69,12 +69,20 @@ class BoardPanelView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMix
 class UserCreateView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMixin, CreateView):
     model = User
     fields = [
-        "username", 
-        "email", 
-        "first_name", 
-        "last_name", 
-        "is_student", 
+        "username",
+        "email",
+        "first_name",
+        "last_name",
+        "gender",
+        "job",
+        "phone",
+        "country_of_origin",
+        "address",
+        "language",
+        "birthdate",
+        "is_student",
         "is_boardofdirector",
+        "is_active",
     ]
     template_name = "staff_panel/staff_user_management/user_form.html"
     success_url = reverse_lazy("user_list")
@@ -129,12 +137,20 @@ class UserDetailView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMix
 class UserUpdateView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMixin, UpdateView):
     model = User
     fields = [
-        "username", 
-        "email", 
-        "first_name", 
-        "last_name", 
-        "is_student", 
+        "username",
+        "email",
+        "first_name",
+        "last_name",
+        "gender",
+        "job",
+        "phone",
+        "country_of_origin",
+        "address",
+        "language",
+        "birthdate",
+        "is_student",
         "is_boardofdirector",
+        "is_active",
     ]
     template_name = "staff_panel/staff_user_management/user_form.html"
     success_url = reverse_lazy("user_list")
