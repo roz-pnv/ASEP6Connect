@@ -1,0 +1,24 @@
+{% extends "staff_panel/panel.html" %}
+
+{% block page_title %}
+  ❌ Confirm Delete: {{ student.user.username }}
+{% endblock %}
+
+{% block action_buttons %}
+  <a href="{% url 'user_detail' student.user.id %}" class="header-btn">← Back to User</a>
+{% endblock %}
+
+{% block main_content %}
+<div class="px-3">
+  <h5 class="text-danger mb-3">Are you sure you want to delete the student profile for <strong>{{ student.user.username }}</strong>?</h5>
+  <p>This action cannot be undone. All associated data will be permanently removed.</p>
+
+  <form method="post" class="mt-4">
+    {% csrf_token %}
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-danger">Yes, Delete</button>
+      <a href="{% url 'user_detail' student.user.id %}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

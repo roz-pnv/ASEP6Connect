@@ -13,11 +13,14 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db.models import Q
 
 from users.models import Membership
+from users.models import Student 
 from users.models.user import Country
 from users.models.membership import MemberType
 from users.models.board_of_director import BoardOfDirector
 from users.models.board_of_director import RoleType
 from users.forms.staff_membership import MembershipForm
+from users.forms.staff_student import StudentForm  
+
 
 User = get_user_model()
 
@@ -156,6 +159,9 @@ class UserDetailView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMix
         all_memberships = user.memberships.order_by("-created_at")
         context["all_memberships"] = all_memberships
 
+        student_profile = Student.objects.filter(user=user).first()
+        context["student"] = student_profile
+
         return context
 
 
@@ -232,3 +238,50 @@ class MembershipDeleteView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleCont
     def get_success_url(self):
         return reverse_lazy("user_detail", kwargs={"user_id": self.object.user.id})
 
+
+class StudentDetailView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMixin, DetailView):
+    model = Student
+    template_name = "staff_panel/staff_student_management/student_detail.html"
+    context_object_name = "student"
+    pk_url_kwarg = "student_id"
+
+
+class StudentCreateView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMixin, CreateView):
+    model = Student
+    form_class = StudentForm
+    template_name = 'staff_panel/staff_user_management/student_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.user = get_object_or_404(User, pk=self.kwargs.get('user_id'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.user = self.user
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["target_user"] = self.user  
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy("user_detail", kwargs={"user_id": self.object.user.id})
+
+
+class StudentUpdateView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMixin, UpdateView):
+    model = Student
+    form_class = StudentForm
+    template_name = "staff_panel/staff_user_management/student_form.html"
+    pk_url_kwarg = "student_id"
+
+    def get_success_url(self):
+        return reverse_lazy("user_detail", kwargs={"user_id": self.object.user.id})
+    
+
+class StudentDeleteView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMixin, DeleteView):
+    model = Student
+    template_name = "staff_panel/staff_user_management/student_confirm_delete.html"
+    pk_url_kwarg = "student_id"
+
+    def get_success_url(self):
+        return reverse_lazy("user_detail", kwargs={"user_id": self.object.user.id})
