@@ -1,0 +1,28 @@
+{% extends "staff_panel/panel.html" %}
+
+{% block page_title %}
+  ❌ Delete User: {{ object.username }}
+{% endblock %}
+
+{% block action_buttons %}
+  <a href="{% url 'user_list' %}" class="header-btn">← Back to List</a>
+{% endblock %}
+
+{% block main_content %}
+<div class="delete-confirmation px-3">
+  <div class="alert alert-warning d-flex align-items-center gap-2">
+    <span class="fs-4">⚠️</span>
+    <div>
+      <strong>Warning:</strong> This action is irreversible.
+    </div>
+  </div>
+
+  <p class="fs-5">Are you sure you want to permanently delete <strong>{{ object.username }}</strong>?</p>
+
+  <form method="post" class="d-flex gap-2 mt-4">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">🗑️ Delete</button>
+    <a href="{% url 'user_list' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

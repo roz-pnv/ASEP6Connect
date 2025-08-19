@@ -1,0 +1,287 @@
+/* ===========================
+   Global Styles
+=========================== */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fafafa;
+}
+
+main {
+  min-height: 100vh;
+}
+
+/* ===========================
+   Header Styles
+=========================== */
+.site-header {
+  background: linear-gradient(to right, #4B0082, #6A5ACD);
+  color: white;
+  padding: 20px 30px;
+}
+
+.site-title-link {
+  color: white !important;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.site-title-link:hover {
+  color: white;
+  text-decoration: none;
+}
+
+.header-top {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.header-bottom {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.header-btn {
+  background-color: white;
+  color: #4B0082;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: bold;
+  border: 2px solid #4B0082;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.header-btn:hover {
+  background-color: #4B0082;
+  color: white;
+}
+
+/* ===========================
+   Footer Styles
+=========================== */
+footer {
+  background: linear-gradient(to right, #6A5ACD, #ffffff);
+  color: #333; 
+  padding: 20px;
+  text-align: center;
+}
+
+
+/* ===========================
+   Dashboard Layout
+=========================== */
+.dashboard {
+  display: flex;
+  min-height: calc(100vh - 80px); 
+}
+
+.submenu {
+  margin-left: 15px;
+  padding-left: 10px;
+  border-left: 2px solid #ccc;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+/* ===========================
+   Sidebar Styles
+=========================== */
+.sidebar {
+  width: 220px;
+  background: linear-gradient(to bottom, #4B0082, #6A5ACD);
+  color: white;
+  padding: 20px;
+  font-weight: bold;
+  transition: width 0.3s ease;
+  overflow: hidden;
+}
+
+.sidebar.collapsed {
+  width: 0;
+  padding: 0;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.sidebar li {
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.sidebar li:hover,
+.sidebar li.active {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.sidebar li a {
+  color: white !important;
+  text-decoration: none !important;
+  display: block;
+}
+
+.sidebar-right {
+  position: fixed;
+  top: 80px;
+  right: -300px;
+  width: 300px;
+  height: calc(100vh - 80px);
+  background-color:linear-gradient(to bottom, #4B0082, #6A5ACD);
+  border-left: linear-gradient(to bottom, #4B0082, #6A5ACD);
+  padding: 20px;
+  overflow-y: auto;
+  transition: right 0.3s ease;
+  z-index: 1000;
+}
+
+.sidebar-right.active {
+  right: 0;
+}
+
+/* ===========================
+   Vertical Strip Styles
+=========================== */
+.sidebar-strip {
+  position: fixed;
+  top: 80px; 
+  left: 220px;
+  width: 6px;
+  height: calc(100vh - 80px);
+  background: linear-gradient(to bottom, #4B0082, #6A5ACD);
+  z-index: 999;
+  transition: left 0.3s ease;
+}
+
+.sidebar.collapsed ~ .sidebar-strip {
+  left: 0;
+}
+
+/* ===========================
+   Toggle Button Styles
+=========================== */
+.sidebar-header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start; 
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.sidebar-toggle-btn {
+  background: linear-gradient(to bottom, #4B0082, #6A5ACD);
+  color: white;
+  font-size: 24px;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 0; 
+  line-height: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin: 0;
+}
+
+
+/* ===========================
+   Main Content Styles
+=========================== */
+.tab-content {
+  flex-grow: 1;
+  padding: 30px;
+  background-color: #f8f9fa;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+/* ===========================
+   Footer Styles
+=========================== */
+.site-footer {
+  background-color: #eee;
+  text-align: center;
+  padding: 15px;
+  font-size: 14px;
+}
+
+/* ===========================
+   Form Styles
+=========================== */
+form input[type="text"],
+form input[type="email"],
+form input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: #4B0082;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #5c0db3;
+}
+
+/* ===========================
+   Container Styles
+=========================== */
+.container {
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ===========================
+   Alert Styles
+=========================== */
+.alert {
+  font-size: 15px;
+  border-radius: 8px;
+}
+
+.btn-close {
+  opacity: 0.7;
+}
+
+.btn-close:hover {
+  opacity: 1;
+}
