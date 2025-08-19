@@ -1,9 +1,5 @@
-from datetime import timedelta
-from datetime import date
-
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
-from django.utils import timezone
 from django.views.generic import ListView
 from django.views.generic import CreateView
 from django.views.generic import UpdateView 
@@ -108,7 +104,7 @@ class UserListView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMixin
             qs = qs.filter(created_at__date__gte=joined_after)
         if joined_before:
             qs = qs.filter(created_at__date__lte=joined_before)
-            
+
         if is_student == "true":
             qs = qs.filter(is_student=True)
         elif is_student == "false":

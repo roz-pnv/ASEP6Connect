@@ -1,6 +1,5 @@
 from django.contrib.auth import login
 from django.contrib.auth import logout
-from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.shortcuts import redirect
