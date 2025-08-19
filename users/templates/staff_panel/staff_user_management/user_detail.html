@@ -1,23 +1,97 @@
 {% extends "staff_panel/panel.html" %}
 
-{% block page_title %}👤 {{ user.username }}{% endblock %}
+{% block page_title %}👤 {{ user.get_full_name }}{% endblock %}
 
 {% block action_buttons %}
-<a href="{% url 'user_edit' user.id %}" class="btn btn-warning">Edit</a>
 <a href="{% url 'user_delete' user.id %}" class="btn btn-danger">Delete</a>
 <a href="{% url 'user_list' %}" class="btn btn-secondary">← Back to List</a>
 {% endblock %}
 
 {% block main_content %}
-<div class="card">
+<div class="row">
+  <div class="col-md-6">
+    <div class="card mb-3">
+      <div class="card-header">📇User Info</div>
+      <div class="card-body">
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Student:</strong> {{ user.is_student|yesno:"Yes,No" }}</p>
+        <p><strong>Board Member:</strong> {{ user.is_boardofdirector|yesno:"Yes,No" }}</p>
+        <p><strong>Country:</strong> {{ user.country_of_origin.name|default:"—" }}</p>
+        <p><strong>Last Login:</strong> {{ user.last_login|date:"Y-m-d H:i" }}</p>
+        <a href="{% url 'user_edit' user.id %}" class="btn btn-sm btn-primary">Edit User</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+  {% if membership and not membership.is_expired %}
+    <div class="card mb-3">
+      <div class="card-header">🪪 Membership Info</div>
+      <div class="card-body">
+        <p><strong>Type:</strong> {{ membership.get_member_type_display }}</p>
+        <p><strong>Can Vote:</strong> {{ membership.can_vote|yesno:"Yes,No" }}</p>
+        <p><strong>Confirmed:</strong> {{ membership.is_confirmed|yesno:"Yes,No" }}</p>
+        <p><strong>Active:</strong> {{ membership.is_active|yesno:"Yes,No" }}</p>
+        <p><strong>Expiry:</strong> {{ membership.membership_expiry|date:"Y-m-d" }}</p>
+        <p><strong>Confirmed At:</strong> {{ membership.confirmed_at|date:"Y-m-d H:i" }}</p>
+        <a href="{% url 'membership_edit' membership.id %}" class="btn btn-sm btn-primary">Edit Membership</a>
+      </div>
+    </div>
+  {% else %}
+    <div class="card mb-3 border-info">
+      <div class="card-body">
+        {% if membership %}
+          <p>This membership has expired.</p>
+        {% else %}
+          <p>This user has no membership record.</p>
+        {% endif %}
+        <a href="{% url 'membership_create' user.id %}" class="btn btn-sm btn-success">Create Membership</a>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+
+{% if all_memberships %}
+<div class="card mb-3">
+  <div class="card-header">📜 Membership History</div>
   <div class="card-body">
-    <h5 class="card-title">{{ user.get_full_name }}</h5>
-    <p><strong>Username:</strong> {{ user.username }}</p>
-    <p><strong>Email:</strong> {{ user.email }}</p>
-    <p><strong>Student:</strong> {{ user.is_student|yesno:"Yes,No" }}</p>
-    <p><strong>Board Member:</strong> {{ user.is_boardofdirector|yesno:"Yes,No" }}</p>
-    <p><strong>Country:</strong> {{ user.country_of_origin.name|default:"—" }}</p>
-    <p><strong>Last Login:</strong> {{ user.last_login|date:"Y-m-d H:i" }}</p>
+    <table class="table table-sm table-bordered">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Type</th>
+          <th>Confirmed</th>
+          <th>Active</th>
+          <th>Can Vote</th>
+          <th>Created At</th>
+          <th>Expiry</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in all_memberships %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ m.get_member_type_display }}</td>
+          <td>{{ m.is_confirmed|yesno:"Yes,No" }}</td>
+          <td>{{ m.is_active|yesno:"Yes,No" }}</td>
+          <td>{{ m.can_vote|yesno:"Yes,No" }}</td>
+          <td>{{ m.created_at|date:"Y-m-d" }}</td>
+          <td>{{ m.membership_expiry|date:"Y-m-d" }}</td>
+          <td class="text-nowrap">
+            <a href="{% url 'membership_edit' m.id %}" class="btn btn-sm btn-primary">Edit</a>
+            <a href="{% url 'membership_delete' membership_id=m.id %}" class="btn btn-sm btn-danger"
+               onclick="return confirm('Are you sure you want to delete this membership?');">
+              Delete
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
+{% endif %}
 {% endblock %}

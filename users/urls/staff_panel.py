@@ -6,6 +6,9 @@ from users.views.staff_panel import UserCreateView
 from users.views.staff_panel import UserUpdateView
 from users.views.staff_panel import UserDeleteView
 from users.views.staff_panel import UserDetailView
+from users.views.staff_panel import MembershipCreateView
+from users.views.staff_panel import MembershipUpdateView
+from users.views.staff_panel import MembershipDeleteView
 
 urlpatterns = [
 	path("", BoardPanelView.as_view(), name="staff_panel"),
@@ -14,4 +17,7 @@ urlpatterns = [
     path("users/add/", UserCreateView.as_view(), name="user_add"),
     path("users/<int:pk>/edit/", UserUpdateView.as_view(), name="user_edit"),
     path("users/<int:pk>/delete/", UserDeleteView.as_view(), name="user_delete"),
+	path('membership/create/<int:user_id>/', MembershipCreateView.as_view(), name='membership_create'),
+    path('membership/edit/<int:membership_id>/', MembershipUpdateView.as_view(), name='membership_edit'),
+	path('membership/delete/<int:membership_id>/', MembershipDeleteView.as_view(), name='membership_delete'),
 ]

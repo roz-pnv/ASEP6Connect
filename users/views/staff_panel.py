@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.generic import ListView
 from django.views.generic import CreateView
 from django.views.generic import UpdateView 
@@ -10,10 +12,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db.models import Q
 
+from users.models import Membership
 from users.models.user import Country
 from users.models.membership import MemberType
-from users.models.board_of_director import BoardOfDirector, RoleType
-from users.models.board_of_director import BoardOfDirector, RoleType
+from users.models.board_of_director import BoardOfDirector
+from users.models.board_of_director import RoleType
+from users.forms.staff_membership import MembershipForm
 
 User = get_user_model()
 
@@ -111,8 +115,12 @@ class UserListView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMixin
             qs = qs.filter(is_student=False)
 
         if member_type:
-            qs = qs.filter(memberships__member_type=member_type)
-
+            qs = qs.filter(
+                memberships__member_type=member_type,
+                memberships__is_active=True,
+                memberships__membership_expiry__gte=timezone.now()
+            )
+            
         if q:
             qs = qs.filter(Q(username__icontains=q) | Q(email__icontains=q))
 
@@ -137,6 +145,18 @@ class UserDetailView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMix
     template_name = "staff_panel/staff_user_management/user_detail.html"
     context_object_name = "user"
     pk_url_kwarg = "user_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.get_object()
+
+        current_membership = user.memberships.order_by("-created_at").first()
+        context["membership"] = current_membership
+
+        all_memberships = user.memberships.order_by("-created_at")
+        context["all_memberships"] = all_memberships
+
+        return context
 
 
 class UserUpdateView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMixin, UpdateView):
@@ -165,3 +185,50 @@ class UserDeleteView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMix
     model = User
     template_name = "staff_panel/staff_user_management/user_confirm_delete.html"
     success_url = reverse_lazy("user_list")
+
+
+class MembershipCreateView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMixin, CreateView):
+    model = Membership
+    form_class = MembershipForm
+    template_name = "staff_panel/staff_user_management/membership_form.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        self.user = get_object_or_404(User, pk=self.kwargs["user_id"])
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.user = self.user
+        return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["user"] = self.user
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy("user_detail", kwargs={"user_id": self.user.id})
+
+
+class MembershipUpdateView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMixin, UpdateView):
+    model = Membership
+    form_class = MembershipForm
+    template_name = "staff_panel/staff_user_management/membership_form.html"
+    pk_url_kwarg = "membership_id"
+
+    def get_success_url(self):
+        return reverse_lazy("user_detail", kwargs={"user_id": self.object.user.id})
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["user"] = self.object.user
+        return context
+
+
+class MembershipDeleteView(LoginRequiredMixin, StaffRequiredMixin, BoardRoleContextMixin, DeleteView):
+    model = Membership
+    template_name = "staff_panel/staff_user_management/membership_confirm_delete.html"
+    pk_url_kwarg = "membership_id"
+
+    def get_success_url(self):
+        return reverse_lazy("user_detail", kwargs={"user_id": self.object.user.id})
+

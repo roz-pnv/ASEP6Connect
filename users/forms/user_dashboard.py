@@ -33,6 +33,7 @@ class UserUpdateForm(forms.ModelForm):
             'address': forms.Textarea(attrs={'rows': 3}),
         }
 
+
 class StudentUpdateForm(forms.ModelForm):
     class Meta:
         model = Student

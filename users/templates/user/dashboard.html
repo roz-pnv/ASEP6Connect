@@ -1,21 +1,31 @@
 {% extends "base.html" %}
+{% load static %}
+
 {% block content %}
 <div class="dashboard">
-  <aside class="sidebar">
+  <!-- Toggle Button -->
+  <button id="toggleSidebar" class="sidebar-toggle-btn">☰</button>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
     <ul>
-      <li class="main-link" data-parent="my-info">My Info</li>
-      <ul class="submenu" id="my-info-submenu" style="display:none;">
-        <li class="tab-link" data-tab="personal-info">Personal Info</li>
-        {% if student_profile %}
-          <li class="tab-link" data-tab="student-info">Student Info</li>
-        {% endif %}
-        <li class="tab-link" data-tab="membership-info">Membership Info</li>
-      </ul>
-	  {% if board_role %}
-		<li><a href="{% url 'staff_panel' %}">Board Panel</a></li>
-	  {% endif %}
+      <li>
+        <span class="main-link" data-parent="my-info">My Info</span>
+        <ul class="submenu" id="my-info-submenu" style="display:none;">
+          <li class="tab-link" data-tab="personal-info">Personal Info</li>
+          {% if student_profile %}
+            <li class="tab-link" data-tab="student-info">Student Info</li>
+          {% endif %}
+          <li class="tab-link" data-tab="membership-info">Membership Info</li>
+        </ul>
+      </li>
+
+      {% if board_role %}
+        <li><a href="{% url 'staff_panel' %}">Board Panel</a></li>
+      {% endif %}
     </ul>
   </aside>
+
 
   <section class="tab-content">
     {% if messages %}
@@ -122,24 +132,8 @@
   </section>
 </div>
 
-<script>
-  // Toggle My Info & Board Panel submenus
-  document.querySelectorAll('.main-link').forEach(main => {
-    main.addEventListener('click', () => {
-      const submenu = document.getElementById(main.dataset.parent + '-submenu');
-      submenu.style.display = submenu.style.display === 'none' ? 'block' : 'none';
-    });
-  });
+{% block extra_scripts %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}
 
-  // Tab switching
-  document.querySelectorAll('.tab-link').forEach(link => {
-    link.addEventListener('click', () => {
-      document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
-      link.classList.add('active');
-
-      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-      document.getElementById(link.dataset.tab).classList.add('active');
-    });
-  });
-</script>
 {% endblock %}

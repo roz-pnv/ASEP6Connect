@@ -17,6 +17,7 @@
   <table class="table table-hover align-middle purple-table w-100">
     <thead class="table-purple">
       <tr>
+        <th>#</th>
         <th>Username</th>
         <th>Full Name</th>
         <th>Email</th>
@@ -28,6 +29,7 @@
     <tbody>
       {% for user in users %}
       <tr>
+        <td>{{ forloop.counter }}</td>
         <td>
           <a href="{% url 'user_detail' user.id %}">{{ user.username }}</a>
         </td>
@@ -93,7 +95,7 @@
       <label for="joined_after">Joined After</label>
       <input type="date" name="joined_after" class="form-control" value="{{ request.GET.joined_after }}">
     </div>
-    
+
     <div class="col-auto">
       <label for="joined_before">Joined Before</label>
       <input type="date" name="joined_before" class="form-control" value="{{ request.GET.joined_before }}">
@@ -112,23 +114,3 @@
   </form>
 </aside>
 {% endblock %}
-
-{% block extra_scripts %}
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const toggleBtn = document.getElementById("toggleFilter");
-    const closeBtn = document.getElementById("closeFilter");
-    const sidebar = document.querySelector(".sidebar-right");
-    const mainContent = document.querySelector(".main-content");
-
-    function toggleSidebar() {
-      sidebar.classList.toggle("active");
-      mainContent.classList.toggle("with-sidebar");
-    }
-
-    if (toggleBtn) toggleBtn.addEventListener("click", toggleSidebar);
-    if (closeBtn) closeBtn.addEventListener("click", toggleSidebar);
-  });
-</script>
-{% endblock %}
-

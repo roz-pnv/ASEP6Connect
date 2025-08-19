@@ -1,16 +1,17 @@
-
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
 
 <div class="dashboard d-flex">
+  <!-- Toggle Button (outside sidebar) -->
+  <button id="toggleSidebar" class="sidebar-toggle-btn fixed-toggle-btn">☰</button>
 
   <!-- Left Sidebar -->
-  <aside class="sidebar sidebar-left">
-  <a href="{% url 'staff_panel' %}" class="site-title-link">
-    <h4 class="mb-4">Board Panel</h4>
-  </a>
-	<ul>
+  <aside class="sidebar sidebar-left" id="sidebar">
+    <a href="{% url 'staff_panel' %}" class="site-title-link">
+      <h4 class="mb-4">Board Panel</h4>
+    </a>
+    <ul>
       {% if is_secretary %}
         <li><a href="#">Membership Requests</a></li>
         <li><a href="{% url 'user_list' %}">Manage Users</a></li>
@@ -25,8 +26,7 @@
         <li><a href="{% url 'user_list' %}">Manage Users</a></li>
       {% endif %}
     </ul>
-	</aside>
-
+  </aside>
 
   <!-- Main Content -->
   <div class="main-content-wrapper flex-grow-1 d-flex">
@@ -58,7 +58,7 @@
 </div>
 
 {% block extra_scripts %}
-<!-- Optional scripts -->
+<script src="{% static 'js/dashboard.js' %}"></script>
 {% endblock %}
 
 {% endblock %}
