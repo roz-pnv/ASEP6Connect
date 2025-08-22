@@ -3,6 +3,7 @@
 {% block page_title %}{{ meeting.title }}{% endblock %}
 
 {% block action_buttons %}
+  <a href="{% url 'meeting_delete' view.object.pk %}" class="btn btn-outline-danger">🗑 Delete</a>
   <a href="{% url 'staff_meeting_list'  %}" class="header-btn">← Back to Meeting</a>
 {% endblock %}
 
@@ -10,21 +11,21 @@
 <div class="row">
   <div class="col-md-6">
     <!-- 🗓 Meeting Info -->
-	<div class="card mb-4">
-		<div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-			<span>🗓 Meeting Info</span>
-			<a href="#" class="btn btn-sm btn-light">✏️ Edit</a>
-		</div>
-		<div class="card-body">
-		<p><strong>Date:</strong> {{ meeting.date|date:"Y/m/d H:i" }}</p>
-		<p><strong>Type:</strong> {{ meeting.get_meeting_type_display }}</p>
-		<p><strong>Status:</strong> {{ meeting.get_status_display }}</p>
-		<p><strong>Location:</strong> {{ meeting.location|default:"—" }}</p>
-		{% if meeting.online_link %}
-			<p><strong>Online Link:</strong> <a href="{{ meeting.online_link }}" target="_blank">{{ meeting.online_link }}</a></p>
-		{% endif %}
-		</div>
-	</div>
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <span>🗓 Meeting Info</span>
+        <a href="{% url 'meeting_edit' meeting.pk %}" class="btn btn-sm btn-light">✏️ Edit</a>
+      </div>
+      <div class="card-body">
+        <p><strong>Date:</strong> {{ meeting.date|date:"Y/m/d H:i" }}</p>
+        <p><strong>Type:</strong> {{ meeting.get_meeting_type_display }}</p>
+        <p><strong>Status:</strong> {{ meeting.get_status_display }}</p>
+        <p><strong>Location:</strong> {{ meeting.location|default:"—" }}</p>
+        {% if meeting.online_link %}
+          <p><strong>Online Link:</strong> <a href="{{ meeting.online_link }}" target="_blank">{{ meeting.online_link }}</a></p>
+        {% endif %}
+      </div>
+    </div>
   </div>
   <div class="col-md-6">
     <!-- 📋 Agenda Items -->

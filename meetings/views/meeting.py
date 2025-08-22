@@ -1,9 +1,12 @@
 from datetime import date
 
 from django.db.models import Q
+from django.urls import reverse
 from django.views.generic import ListView
 from django.views.generic import CreateView
 from django.views.generic import DetailView
+from django.views.generic import DeleteView
+from django.views.generic import UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.shortcuts import redirect
@@ -168,3 +171,19 @@ class StaffMeetingDetailView(LoginRequiredMixin, BoardRoleContextMixin, DetailVi
 
         return context
 
+
+class MeetingUpdateView(BoardRoleContextMixin, UpdateView):
+    model = Meeting
+    form_class = MeetingForm
+    template_name = 'staff_panel/staff_meeting_management/meeting_update.html'
+
+    def get_success_url(self):
+        return reverse('staff_meeting_detail', kwargs={'pk': self.object.pk})
+
+
+class MeetingDeleteView(BoardRoleContextMixin, DeleteView):
+    model = Meeting
+    template_name = 'staff_panel/staff_meeting_management/meeting_confirm_delete.html'
+
+    def get_success_url(self):
+        return reverse('staff_meeting_list')

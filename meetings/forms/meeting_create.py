@@ -46,4 +46,20 @@ class InviteUsersForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields['invited_users'].label_from_instance = lambda obj: f"{obj.get_full_name()} ({'Board' if obj.is_boardofdirector else 'Member'})"
 
-    
+
+class MeetingUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Meeting
+        fields = '__all__'
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'date': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
+            'location': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+        }
+        labels = {
+            'title': 'Meeting Title',
+            'date': 'Date & Time',
+            'location': 'Location',
+            'description': 'Description',
+        }
