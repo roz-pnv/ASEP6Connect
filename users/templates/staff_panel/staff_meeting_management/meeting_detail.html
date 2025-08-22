@@ -132,25 +132,32 @@
 	<div class="card mb-4">
 		<div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
 			<span>📄 Minutes</span>
-			<a href="#" class="btn btn-sm btn-light">➕ New</a>
+			{% if minutes %}
+			<div>
+				<a href="{% url 'minutes_edit' minutes.pk %}" class="btn btn-sm btn-light">✏️ Edit</a>
+				<a href="{% url 'minutes_delete' minutes.pk %}" class="btn btn-sm btn-danger ms-2">🗑️ Delete</a>
+			</div>
+			{% else %}
+			<a href="{% url 'minutes_create' meeting.pk %}" class="btn btn-sm btn-light">➕ Create</a>
+			{% endif %}
 		</div>
 		<div class="card-body">
-		{% if minutes %}
+			{% if minutes %}
 			<p><strong>Status:</strong> {{ minutes.get_status_display }}</p>
 			<p><strong>Summary:</strong> {{ minutes.summary }}</p>
 			{% if minutes.body %}
-			<p>{{ minutes.body|linebreaks }}</p>
+				<p>{{ minutes.body|linebreaks }}</p>
 			{% endif %}
 			{% if minutes.file %}
-			<p><a href="{{ minutes.file.url }}" target="_blank">📎 Download Minutes File</a></p>
+				<p><a href="{{ minutes.file.url }}" target="_blank">📎 Download Minutes File</a></p>
 			{% endif %}
 			<p><small>Recorded by: {{ minutes.recorded_by.get_full_name|default:"—" }}</small></p>
 			{% if minutes.approved_by %}
-			<p><small>Approved by: {{ minutes.approved_by.get_full_name }} at {{ minutes.approved_at|date:"Y/m/d H:i" }}</small></p>
+				<p><small>Approved by: {{ minutes.approved_by.get_full_name }} at {{ minutes.approved_at|date:"Y/m/d H:i" }}</small></p>
 			{% endif %}
-		{% else %}
+			{% else %}
 			<p>No minutes recorded.</p>
-		{% endif %}
+			{% endif %}
 		</div>
 	</div>
   </div>

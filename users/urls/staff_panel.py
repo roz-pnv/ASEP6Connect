@@ -22,6 +22,9 @@ from meetings.views.invite import InviteDeleteView
 from meetings.views.agenda import AgendaItemCreateView 
 from meetings.views.agenda import AgendaItemUpdateView
 from meetings.views.agenda import AgendaItemDeleteView
+from meetings.views.minutes import MinutesCreateView 
+from meetings.views.minutes import MinutesUpdateView
+from meetings.views.minutes import MinutesDeleteView
 
 urlpatterns = [
 	path("", BoardPanelView.as_view(), name="staff_panel"),
@@ -51,4 +54,8 @@ urlpatterns = [
     path('agenda/create/<int:meeting_pk>/', AgendaItemCreateView.as_view(), name='agenda_create'),
     path('agenda/edit/<int:pk>/', AgendaItemUpdateView.as_view(), name='agenda_edit'),
     path('agenda/delete/<int:pk>/', AgendaItemDeleteView.as_view(), name='agenda_delete'),
+	
+    path("minutes/create/<int:meeting_pk>/", MinutesCreateView.as_view(), name="minutes_create"),
+    path("minutes/edit/<int:pk>/", MinutesUpdateView.as_view(), name="minutes_edit"),
+    path("minutes/delete/<int:pk>/", MinutesDeleteView.as_view(), name="minutes_delete"),
 ]
