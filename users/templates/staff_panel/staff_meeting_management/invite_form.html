@@ -1,0 +1,13 @@
+{% extends "staff_panel/panel.html" %}
+
+{% block page_title %}Invite User{% endblock %}
+
+{% block main_content %}
+<div class="container mt-4">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Save</button>
+  </form>
+</div>
+{% endblock %}

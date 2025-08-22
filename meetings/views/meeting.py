@@ -3,6 +3,7 @@ from datetime import date
 from django.db.models import Q
 from django.views.generic import ListView
 from django.views.generic import CreateView
+from django.views.generic import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.shortcuts import redirect
@@ -10,9 +11,10 @@ from django.contrib.auth import get_user_model
 
 from users.models.board_of_director import BoardOfDirector
 from users.models.board_of_director import RoleType
+from users.models.membership import Membership  
 from meetings.models.meeting import Meeting
 from meetings.models.meeting import MeetingType
-from users.models.membership import Membership  
+from meetings.models.motion import Motion
 from meetings.forms.meeting_create import MeetingForm
 from meetings.forms.meeting_create import AgendaItemFormSet
 
@@ -157,3 +159,30 @@ class MeetingCreateView(LoginRequiredMixin, BoardRoleContextMixin, CreateView):
                 continue
 
         return redirect('meeting_list') 
+
+
+class StaffMeetingDetailView(LoginRequiredMixin, BoardRoleContextMixin, DetailView):
+    model = Meeting
+    template_name = 'staff_panel/staff_meeting_management/meeting_detail.html'
+    context_object_name = 'meeting'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        meeting = self.get_object()
+
+        context['agenda_items'] = meeting.agenda_items.all() if hasattr(meeting, 'agenda_items') else []
+
+        context['invitees'] = meeting.invites.all() if hasattr(meeting, 'invites') else []
+
+        context['minutes'] = getattr(meeting, 'minutes', None)
+
+        motions = Motion.objects.filter(agenda_item__meeting=meeting).select_related('agenda_item')
+        context['motions'] = motions if motions.exists() else []
+        
+        context['votes_by_motion'] = {
+			motion.id: list(motion.votes.select_related('voter').all())
+			for motion in motions
+		} if motions.exists() else {}
+
+        return context
+

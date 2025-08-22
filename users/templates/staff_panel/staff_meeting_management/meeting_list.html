@@ -1,7 +1,7 @@
 {% extends "staff_panel/panel.html" %}
 {% load static %}
 
-{% block title %}Meetings{% endblock %}
+{% block page_title %}📅 Meeting List{% endblock %}
 
 {% block action_buttons %}
 <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
@@ -12,12 +12,12 @@
 
 {% block main_content %}
 <div class="container-fluid mt-4">
-  <h2>📅 Meeting List</h2>
 	
   {% if meetings %}
     <table class="table table-bordered mt-3">
       <thead>
         <tr>
+		  <th>#</th>
           <th>Title</th>
           <th>Date</th>
           <th>Type</th>
@@ -28,11 +28,12 @@
       <tbody>
         {% for meeting in meetings %}
         <tr>
+		  <td>{{ forloop.counter }}</td>
           <td>{{ meeting.title }}</td>
           <td>{{ meeting.date|date:"Y/m/d H:i" }}</td>
           <td>{{ meeting.get_meeting_type_display }}</td>
           <td>{{ meeting.status }}</td>
-          <td><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
+          <td><a href="{% url 'staf_meeting_detail' meeting.pk %}" class="btn btn-sm btn-outline-primary">View</a></td>
         </tr>
         {% endfor %}
       </tbody>
