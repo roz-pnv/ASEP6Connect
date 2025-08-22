@@ -1,4 +1,5 @@
 from django import forms
+
 from meetings.models import Invite
 
 class InviteForm(forms.ModelForm):

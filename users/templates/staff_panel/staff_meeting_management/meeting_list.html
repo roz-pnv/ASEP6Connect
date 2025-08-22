@@ -33,7 +33,7 @@
           <td>{{ meeting.date|date:"Y/m/d H:i" }}</td>
           <td>{{ meeting.get_meeting_type_display }}</td>
           <td>{{ meeting.status }}</td>
-          <td><a href="{% url 'staf_meeting_detail' meeting.pk %}" class="btn btn-sm btn-outline-primary">View</a></td>
+          <td><a href="{% url 'staff_meeting_detail' meeting.pk %}" class="btn btn-sm btn-outline-primary">View</a></td>
         </tr>
         {% endfor %}
       </tbody>

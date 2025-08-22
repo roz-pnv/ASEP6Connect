@@ -12,6 +12,7 @@ from django.contrib.auth import get_user_model
 from users.models.board_of_director import BoardOfDirector
 from users.models.board_of_director import RoleType
 from users.models.membership import Membership  
+from users.views.staff_panel import BoardRoleContextMixin
 from meetings.models.meeting import Meeting
 from meetings.models.meeting import MeetingType
 from meetings.models.motion import Motion
@@ -19,25 +20,6 @@ from meetings.forms.meeting_create import MeetingForm
 from meetings.forms.meeting_create import AgendaItemFormSet
 
 User = get_user_model()
-
-class BoardRoleContextMixin:
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-
-        active_role = (
-            BoardOfDirector.objects.filter(user=user)
-            .order_by('-start_date')
-            .first()
-        )
-
-        context["is_secretary"] = active_role and active_role.role_type == RoleType.SECRETARY
-        context["is_treasurer"] = active_role and active_role.role_type == RoleType.TREASURER
-        context["is_president"] = active_role and active_role.role_type == RoleType.PRESIDENT
-        context["is_vice_president"] = active_role and active_role.role_type == RoleType.VICE_PRESIDENT
-        context["board_role"] = active_role
-
-        return context
     
     
 class MeetingListView(LoginRequiredMixin, ListView):
