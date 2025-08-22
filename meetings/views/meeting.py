@@ -2,14 +2,42 @@ from datetime import date
 
 from django.db.models import Q
 from django.views.generic import ListView
+from django.views.generic import CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
+from django.shortcuts import redirect
+from django.contrib.auth import get_user_model
 
+from users.models.board_of_director import BoardOfDirector
+from users.models.board_of_director import RoleType
 from meetings.models.meeting import Meeting
 from meetings.models.meeting import MeetingType
 from users.models.membership import Membership  
+from meetings.forms.meeting_create import MeetingForm
+from meetings.forms.meeting_create import AgendaItemFormSet
 
+User = get_user_model()
 
+class BoardRoleContextMixin:
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        active_role = (
+            BoardOfDirector.objects.filter(user=user)
+            .order_by('-start_date')
+            .first()
+        )
+
+        context["is_secretary"] = active_role and active_role.role_type == RoleType.SECRETARY
+        context["is_treasurer"] = active_role and active_role.role_type == RoleType.TREASURER
+        context["is_president"] = active_role and active_role.role_type == RoleType.PRESIDENT
+        context["is_vice_president"] = active_role and active_role.role_type == RoleType.VICE_PRESIDENT
+        context["board_role"] = active_role
+
+        return context
+    
+    
 class MeetingListView(LoginRequiredMixin, ListView):
     model = Meeting
     template_name = 'meeting/list.html'
@@ -57,3 +85,75 @@ class MeetingListView(LoginRequiredMixin, ListView):
             Q(meeting_type=MeetingType.GENERAL) |
             Q(invites__invited_user=user)
         ).distinct().order_by('-date')
+
+
+class StaffMeetingListView(LoginRequiredMixin, BoardRoleContextMixin, ListView):
+    model = Meeting
+    template_name = 'staff_panel/staff_meeting_management/meeting_list.html'
+    context_object_name = 'meetings'
+    paginate_by = 10
+
+    def dispatch(self, request, *args, **kwargs):
+        user = request.user
+
+        is_board = getattr(user, 'is_boardofdirector', False)
+
+        if not (is_board or user.is_superuser):
+            return render(request, 'errors/meeting_access_denied.html')
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return Meeting.objects.all().order_by('-date')
+
+
+class MeetingCreateView(LoginRequiredMixin, BoardRoleContextMixin, CreateView):
+    model = Meeting
+    form_class = MeetingForm
+    template_name = 'staff_panel/staff_meeting_management/meeting_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        user = request.user
+        active_role = (
+            BoardOfDirector.objects.filter(user=user)
+            .order_by('-start_date')
+            .first()
+        )
+        if not (user.is_superuser or (active_role and active_role.role_type in [RoleType.PRESIDENT, RoleType.SECRETARY])):
+            return render(request, 'errors/meeting_access_denied.html')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['agenda_formset'] = AgendaItemFormSet(
+			self.request.POST or None,
+			self.request.FILES or None,
+			prefix='agendaitems'
+		)
+        context['users'] = User.objects.filter(is_active=True).order_by('first_name')
+        
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        agenda_formset = context['agenda_formset']
+
+        form.instance.created_by = self.request.user
+        self.object = form.save()
+
+        if agenda_formset.is_valid():
+            for agenda_form in agenda_formset:
+            	if agenda_form.cleaned_data:
+                    agenda_item = agenda_form.save(commit=False)
+                    agenda_item.meeting = self.object
+                    agenda_item.save()
+            
+        invited_user_ids = self.request.POST.getlist('invited_users')
+        for user_id in invited_user_ids:
+            try:
+                user = User.objects.get(id=user_id)
+                self.object.invites.create(invited_user=user)
+            except User.DoesNotExist:
+                continue
+
+        return redirect('meeting_list') 

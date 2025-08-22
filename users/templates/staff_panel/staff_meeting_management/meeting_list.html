@@ -1,8 +1,16 @@
-{% extends 'base.html' %}
+{% extends "staff_panel/panel.html" %}
+{% load static %}
 
 {% block title %}Meetings{% endblock %}
 
-{% block content %}
+{% block action_buttons %}
+<div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+  <a href="{% url 'meeting_create' %}" class="header-btn">➕ Add Meeting</a>
+  <button id="toggleFilter" class="header-btn">🔍 Filter</button>
+</div>
+{% endblock %}
+
+{% block main_content %}
 <div class="container-fluid mt-4">
   <h2>📅 Meeting List</h2>
 	

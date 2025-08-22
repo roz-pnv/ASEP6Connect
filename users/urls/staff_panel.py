@@ -10,9 +10,10 @@ from users.views.staff_panel import MembershipCreateView
 from users.views.staff_panel import MembershipUpdateView
 from users.views.staff_panel import MembershipDeleteView
 from users.views.staff_panel import StudentCreateView
-from users.views.staff_panel import StudentDetailView
 from users.views.staff_panel import StudentUpdateView
 from users.views.staff_panel import StudentDeleteView
+from meetings.views.meeting import StaffMeetingListView
+from meetings.views.meeting import MeetingCreateView
 
 urlpatterns = [
 	path("", BoardPanelView.as_view(), name="staff_panel"),
@@ -30,4 +31,7 @@ urlpatterns = [
 	path("student/create/<int:user_id>/", StudentCreateView.as_view(), name="student_create"),
     path("student/edit/<int:student_id>/", StudentUpdateView.as_view(), name="student_edit"),
     path("student/delete/<int:student_id>/", StudentDeleteView.as_view(), name="student_delete"),
+	
+    path('meeting/', StaffMeetingListView.as_view(), name='staff_meeting_list'),
+	path('meeting/create/', MeetingCreateView.as_view(), name='meeting_create'),
 ]
