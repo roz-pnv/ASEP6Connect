@@ -1,4 +1,7 @@
 {% extends "staff_panel/panel.html" %}
+{% load static %}
+{% load vote_filters %}
+{% load dict_filters %}
 
 {% block page_title %}{{ meeting.title }}{% endblock %}
 
@@ -170,29 +173,46 @@
     <div class="card mb-4">
       <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
 		<span>📌 Motions & Votes</span>
-		<a href="#" class="btn btn-sm btn-outline-dark">➕ New</a>
-	  </div>
+        <a href="#" class="btn btn-sm btn-outline-dark">➕ New</a>
+      </div>
       <div class="card-body">
         {% if motions %}
-          {% for motion in motions %}
-            <div class="border rounded p-2 mb-3">
-              <strong>{{ motion.text }}</strong><br>
-              <small>Agenda: {{ motion.agenda_item.title }}</small><br>
-              <small>Proposed by: {{ motion.created_by.get_full_name|default:"—" }}</small><br>
-
-              {% with votes=votes_by_motion.motion.id %}
-                {% if votes %}
-                  <ul class="mt-2">
-                    {% for vote in votes %}
-                      <li>{{ vote.voter.get_full_name }} voted <strong>{{ vote.get_choice_display }}</strong> at {{ vote.voted_at|date:"Y/m/d H:i" }}</li>
-                    {% endfor %}
-                  </ul>
-                {% else %}
-                  <p>No votes recorded for this motion.</p>
-                {% endif %}
-              {% endwith %}
-            </div>
-          {% endfor %}
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Text</th>
+                  <th>Agenda</th>
+                  <th>Proposed By</th>
+                  <th>Yes</th>
+                  <th>No</th>
+                  <th>Abstain</th>
+                  <th>Total Votes</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for motion in motions %}
+                  {% with votes=votes_by_motion|dict_get:motion.id %}
+                    <tr>
+                      <td>{{ motion.id }}</td>
+                      <td>{{ motion.text|truncatewords:10 }}</td>
+                      <td>{{ motion.agenda_item.title }}</td>
+                      <td>{{ motion.created_by.get_full_name|default:"—" }}</td>
+                      <td>{{ votes|yes_count }}</td>
+                      <td>{{ votes|no_count }}</td>
+                      <td>{{ votes|abstain_count }}</td>
+                      <td>{{ votes|length }}</td>
+                      <td>
+                        <a href="{% url 'motion-detail' motion.id %}" class="btn btn-sm btn-outline-primary">🔍 View</a>
+                      </td>
+                    </tr>
+                  {% endwith %}
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         {% else %}
           <p>No motions proposed.</p>
         {% endif %}

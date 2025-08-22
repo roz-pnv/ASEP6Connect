@@ -3,7 +3,7 @@
 {% block page_title %}{{ view.object.pk|yesno:"Edit Meeting,Create Meeting" }}{% endblock %}
 
 {% block action_buttons %}
-  <a href="{% url 'staff_meeting_list' %}" class="header-btn">← Back to List</a>
+  <a href="{% url 'staff_meeting_detail' meeting.pk  %}" class="header-btn">← Back to Meeting</a>
 {% endblock %}
 
 {% block main_content %}

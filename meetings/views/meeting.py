@@ -1,4 +1,5 @@
 from datetime import date
+from collections import defaultdict
 
 from django.db.models import Q
 from django.urls import reverse
@@ -8,13 +9,15 @@ from django.views.generic import DetailView
 from django.views.generic import DeleteView
 from django.views.generic import UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.safestring import mark_safe
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth import get_user_model
 
 from users.models.board_of_director import BoardOfDirector
 from users.models.board_of_director import RoleType
-from users.models.membership import Membership  
+from users.models.membership import Membership
+from meetings.models.vote import VoteChoice  
 from users.views.staff_panel import BoardRoleContextMixin
 from meetings.models.meeting import Meeting
 from meetings.models.meeting import MeetingType
@@ -164,11 +167,12 @@ class StaffMeetingDetailView(LoginRequiredMixin, BoardRoleContextMixin, DetailVi
         motions = Motion.objects.filter(agenda_item__meeting=meeting).select_related('agenda_item')
         context['motions'] = motions if motions.exists() else []
         
-        context['votes_by_motion'] = {
-			motion.id: list(motion.votes.select_related('voter').all())
-			for motion in motions
-		} if motions.exists() else {}
-
+        votes_by_motion = defaultdict(lambda: None)
+        for motion in motions:
+            votes_by_motion[motion.id] = motion.votes.select_related('voter').all()
+            
+        context['votes_by_motion'] = votes_by_motion
+        
         return context
 
 
