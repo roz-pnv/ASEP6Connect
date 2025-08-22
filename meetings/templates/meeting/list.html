@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Meetings{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <h2>📅 Meeting List</h2>
+
+  {% if meetings %}
+    <table class="table table-bordered mt-3">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for meeting in meetings %}
+        <tr>
+          <td>{{ meeting.title }}</td>
+          <td>{{ meeting.date|date:"Y/m/d H:i" }}</td>
+          <td>{{ meeting.get_meeting_type_display }}</td>
+          <td>{{ meeting.status }}</td>
+          <td><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% if is_paginated %}
+      <nav>
+        <ul class="pagination">
+          {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+          {% endif %}
+          <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+          {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+  {% else %}
+    <p>No meetings found.</p>
+  {% endif %}
+</div>
+{% endblock %}

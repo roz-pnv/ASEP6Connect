@@ -12,9 +12,14 @@ from users.views.auth import LogoutView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
+
 	path('register/', UserRegistrationView.as_view(), name='register'),
 	path('login/', LoginView.as_view(), name='login'),
 	path('logout/', LogoutView.as_view(), name='logout'),
+
 	path('user/', include('users.urls.users')),  
-	path('staff/', include('users.urls.staff_panel')),  
+	path('staff/', include('users.urls.staff_panel')), 
+
+	path('meeting/', include('meetings.urls.meeting')),  
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
