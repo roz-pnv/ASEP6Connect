@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path
 from django.urls import include
 from django.views.generic import TemplateView
@@ -15,4 +17,4 @@ urlpatterns = [
 	path('logout/', LogoutView.as_view(), name='logout'),
 	path('user/', include('users.urls.users')),  
 	path('staff/', include('users.urls.staff_panel')),  
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
