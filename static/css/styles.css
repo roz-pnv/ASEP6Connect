@@ -190,8 +190,9 @@ footer {
   right: -300px;
   width: 300px;
   height: calc(100vh - 80px);
-  background-color:linear-gradient(to bottom, #4B0082, #6A5ACD);
+  background:linear-gradient(to bottom, #4B0082, #6A5ACD);
   border-left: linear-gradient(to bottom, #4B0082, #6A5ACD);
+  box-shadow: -2px 0 6px rgba(0, 0, 0, 0.1);
   padding: 20px;
   overflow-y: auto;
   transition: right 0.3s ease;
@@ -201,6 +202,109 @@ footer {
 .sidebar-right.active {
   right: 0;
 }
+
+
+/* ===========================
+   Sidebar Right Filter Styles
+=========================== */
+.sidebar-right {
+  position: fixed;
+  top: 80px;
+  right: -320px;
+  width: 320px;
+  height: calc(100vh - 80px);
+  background: linear-gradient(to bottom, #4B0082, #6A5ACD);
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  overflow-y: auto;
+  transition: right 0.3s ease;
+  z-index: 1000;
+  color: white;
+  border-left: 1px solid #4B0082;
+}
+
+.sidebar-right.active {
+  right: 0;
+}
+
+/* Header inside filter panel */
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.filter-header h5 {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin: 0;
+  color: white;
+}
+
+.filter-header button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.filter-header button:hover {
+  transform: scale(1.2);
+}
+
+/* Form styles */
+.filter-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-form label {
+  font-weight: bold;
+  color: white;
+  margin-bottom: 6px;
+  display: block;
+  font-size: 0.9rem;
+}
+
+.filter-form select,
+.filter-form input[type="text"],
+.filter-form input[type="date"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 14px;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.95rem;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+.filter-form select:focus,
+.filter-form input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(106, 90, 205, 0.4);
+}
+
+/* Submit button */
+.filter-form .btn-purple {
+  background-color: white;
+  color: #4B0082;
+  border: 2px solid white;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.filter-form .btn-purple:hover {
+  background-color: #4B0082;
+  color: white;
+}
+
 
 /* ===========================
    Vertical Strip Styles
@@ -390,3 +494,205 @@ canvas {
 .bg-purple { background-color: #7e57c2; }
 .bg-pink { background-color: #ec407a; }
 .bg-violet { background-color: #ab47bc; }
+
+/* ===========================
+   Wallet Overview Styles
+=========================== */
+.wallet-overview {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+}
+
+.wallet-overview h2.section-title {
+  font-size: 1.6rem;
+  color: #4B0082;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 8px;
+}
+
+.wallet-card {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  border: 1px solid #ddd;
+}
+
+.wallet-card p {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.wallet-card .balance {
+  font-weight: bold;
+  color: #4B0082;
+  font-size: 1.3rem;
+}
+
+.wallet-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.wallet-actions a {
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.wallet-actions .btn-primary {
+  background-color: #4B0082;
+  color: white;
+  border: 2px solid #4B0082;
+}
+
+.wallet-actions .btn-primary:hover {
+  background-color: white;
+  color: #4B0082;
+}
+
+.wallet-actions .btn-success {
+  background-color: #6A5ACD;
+  color: white;
+  border: 2px solid #6A5ACD;
+}
+
+.wallet-actions .btn-success:hover {
+  background-color: white;
+  color: #6A5ACD;
+}
+
+.wallet-actions .btn-secondary {
+  background-color: #eee;
+  color: #333;
+  border: 2px solid #ccc;
+}
+
+.wallet-actions .btn-secondary:hover {
+  background-color: #ddd;
+}
+
+/* ===========================
+   Transaction Table Styles
+=========================== */
+.wallet-overview h3.section-subtitle {
+  font-size: 1.3rem;
+  color: #4B0082;
+  margin-bottom: 1rem;
+}
+
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Segoe UI', sans-serif;
+  margin-bottom: 2rem;
+}
+
+.transaction-table th,
+.transaction-table td {
+  border: 1px solid #ccc;
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.transaction-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+  color: #4B0082;
+}
+
+.transaction-table td .badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: white;
+}
+
+.transaction-table td .bg-purple { background-color: #7e57c2; }
+.transaction-table td .bg-pink { background-color: #ec407a; }
+.transaction-table td .bg-violet { background-color: #ab47bc; }
+
+.transaction-empty {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  padding: 12px;
+}
+
+.card-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 1rem;
+}
+
+.card-header-flex h3 {
+  font-size: 1.3rem;
+  color: #6A0DAD; 
+  margin: 0;
+  white-space: nowrap;
+}
+
+.balance-amount {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #6A0DAD;
+  margin: 0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-purple {
+  background-color: #6A0DAD;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-purple:hover {
+  background-color: #4B0082;
+}
+
+.upcoming-card {
+  border: 1px solid #6A0DAD;
+  background-color: #F3E8FF;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.upcoming-info {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6A0DAD;
+}
+
+.btn-warning {
+  background-color: #FFB347;
+  color: #4B0082;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+

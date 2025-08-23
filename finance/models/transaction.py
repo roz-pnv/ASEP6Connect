@@ -21,6 +21,13 @@ class TransactionType(models.TextChoices):
     DONATION = "donation", "Donation"
 
 
+class PaymentMethod(models.TextChoices):
+    CASH = "cash", "Cash"
+    CHEQUE = "cheque", "Cheque"
+    ONLINE = "online", "Online Payment"
+    WALLET = "wallet", "Wallet Balance"
+
+
 class Transaction(models.Model):
     """
     Represents a financial transaction linked to a wallet.
@@ -59,6 +66,12 @@ class Transaction(models.Model):
     amount = models.BigIntegerField(
         help_text="Transaction amount in the smallest currency unit (e.g., cents)"
     )
+    payment_method = models.CharField(
+        max_length=20,
+        choices=PaymentMethod.choices,
+        default=PaymentMethod.ONLINE,
+        help_text="Method used for this transaction (e.g., Cash, Cheque, Online Payment)"
+    )   
     related_project = models.CharField(
         max_length=255,
         blank=True,
@@ -68,6 +81,11 @@ class Transaction(models.Model):
     created_at = models.DateTimeField(
         auto_now_add=True,
         help_text="Timestamp when the transaction was created"
+    )
+    expires_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Deadline for completing this transaction"
     )
 
     class Meta:
@@ -82,3 +100,9 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"{self.get_type_display()} of {self.amount} ({self.get_status_display()})"
+    
+    @property
+    def is_expired(self):
+        from django.utils import timezone
+        return self.status == TransactionStatus.PENDING and self.expires_at and timezone.now() > self.expires_at
+    

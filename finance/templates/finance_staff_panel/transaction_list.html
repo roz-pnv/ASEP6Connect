@@ -1,0 +1,88 @@
+{% extends "staff_panel/panel.html" %}
+{% load static %}
+
+{% block page_title %}🧾 Manage Transactions{% endblock %}
+
+{% block action_buttons %}
+<div class="card-header-flex">
+  <div class="action-buttons">
+    <a href="#" class="btn btn-purple">➕ Add Transaction</a>
+    <button id="toggleFilter" class="btn btn-purple">🔍 Filter</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block main_class %}with-sidebar{% endblock %}
+
+{% block main_content %}
+<div class="wallet-dashboard">
+
+  <!-- Transactions Card -->
+  <div class="wallet-card transactions-card">
+    <table class="transaction-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>User</th>
+          <th>Type</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Method</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tx in transactions %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ tx.wallet.user.username }}</td>
+            <td>{{ tx.get_type_display }}</td>
+            <td>{{ tx.amount }}</td>
+            <td>
+              <span class="badge {% if tx.status == 'success' %}bg-purple{% elif tx.status == 'failed' %}bg-pink{% else %}bg-violet{% endif %}">
+                {{ tx.get_status_display }}
+              </span>
+            </td>
+            <td>{{ tx.get_payment_method_display }}</td>
+            <td>{{ tx.created_at|date:"Y-m-d H:i" }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7" class="transaction-empty">No transactions found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block right_sidebar %}
+<aside class="sidebar-right">
+  <div class="filter-header">
+    <h5>🔍 Filter Transactions</h5>
+    <button id="closeFilter" class="btn btn-sm btn-outline-secondary">✖</button>
+  </div>
+  <form method="get" class="filter-form px-3">
+    <div class="form-group mb-3">
+      {{ filter_form.user_query.label_tag }}
+      {{ filter_form.user_query }}
+    </div>
+    <div class="form-group mb-3">
+      {{ filter_form.type.label_tag }}  
+      {{ filter_form.type }}
+    </div>
+    <div class="form-group mb-3">
+      {{ filter_form.status.label_tag }}  
+      {{ filter_form.status }}
+    </div>
+    <div class="form-group mb-3">
+      {{ filter_form.payment_method.label_tag }}  
+      {{ filter_form.payment_method }}
+    </div>
+    <button type="submit" class="btn btn-purple w-100">Apply Filter</button>
+    <a href="{% url 'admin_transaction_list' %}" class="btn btn-outline-secondary">Reset</a>
+  </form>
+</aside>
+{% endblock %}

@@ -19,7 +19,8 @@
       {% endif %}
 
       {% if is_treasurer %}
-        <li><a href="#">Manage Transactions</a></li>
+          <li><a href="{% url 'admin_wallet_list' %}">Manage Wallets</a></li>
+          <li><a href="{% url 'admin_transaction_list' %}">Manage Transactions</a></li>
       {% endif %}
 
       {% if is_president or is_vice_president %}
@@ -59,8 +60,10 @@
   </div>
 </div>
 
-{% block extra_scripts %}
-<script src="{% static 'js/dashboard.js' %}"></script>
+
 {% endblock %}
 
+
+{% block extra_scripts %}
+<script src="{% static 'js/dashboard.js' %}"></script>
 {% endblock %}

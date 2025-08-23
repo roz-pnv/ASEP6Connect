@@ -20,6 +20,8 @@ urlpatterns = [
 	path('user/', include('users.urls.users')),  
 	path('staff/', include('users.urls.staff_panel')), 
 
-	path('meeting/', include('meetings.urls.meeting')),  
+	path('meeting/', include('meetings.urls.meeting')), 
 
+	path('finance/', include('finance.urls.wallet')), 
+	path('staff/finance/', include('finance.urls.staff_panel')), 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
