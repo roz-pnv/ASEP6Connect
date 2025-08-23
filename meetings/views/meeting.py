@@ -215,3 +215,4 @@ class MeetingDeleteView(BoardRoleContextMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('staff_meeting_list')
+    

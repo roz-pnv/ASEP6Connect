@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load meeting_filters %}
+
+{% block title %}Meeting Room{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Meeting Room: {{ meeting.title }}</h2>
+  <p><strong>Date:</strong> {{ meeting.date|date:"Y/m/d H:i" }}</p>
+  <p><strong>Type:</strong> {{ meeting.get_meeting_type_display }}</p>
+  <hr>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <h4>Create New Motion</h4>
+  <form method="post" class="mb-5">
+    {% csrf_token %}
+    {{ motion_form.as_p }}
+    <button type="submit" name="create_motion" class="btn btn-primary">Submit Motion</button>
+  </form>
+
+  <h4>Available Motions</h4>
+  {% if motions %}
+    {% for motion in motions %}
+	<div class="card mb-4">
+		<div class="card-body">
+		<h5>{{ motion.text }}</h5>
+		<p><small class="text-muted">Proposed by: {{ motion.created_by.get_full_name|default:"—" }}</small></p>
+
+		{% if motion.id in user_votes %}
+			{% with user_votes|get_item:motion.id as vote_choice %}
+				<p class="text-success fw-bold">You voted: {{ vote_choice|capfirst }}</p>
+			{% endwith %}
+		{% else %}
+			<form method="post">
+			{% csrf_token %}
+			<input type="hidden" name="motion_id" value="{{ motion.id }}">
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="choice" value="yes" required>
+				<label class="form-check-label">Yes ✅</label>
+			</div>
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="choice" value="no">
+				<label class="form-check-label">No ❌</label>
+			</div>
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="choice" value="abstain">
+				<label class="form-check-label">Abstain ⚪</label>
+			</div>
+			<button type="submit" name="vote_motion" class="btn btn-success mt-3">Submit Vote</button>
+			</form>
+		{% endif %}
+		</div>
+	</div>
+	{% endfor %}
+  {% else %}
+    <p class="text-muted">No motions have been proposed yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

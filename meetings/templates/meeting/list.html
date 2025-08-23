@@ -26,7 +26,7 @@
 			<td><span class="badge bg-success">{{ meeting.get_status_display }}</span></td>
 			<td>
 				{% if meeting.is_active %}
-				<a href="#" class="btn btn-sm btn-primary">Enter Room</a>
+				<a href="{% url 'meeting_room' meeting.id %}" class="btn btn-sm btn-primary">Enter Room</a>
 				<span class="text-muted ms-2">🕒 Active now</span>
 				{% else %}
 				<span class="text-muted">Available 2 hours before start</span>
