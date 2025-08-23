@@ -1,8 +1,10 @@
 from datetime import date
+from datetime import timedelta
 from collections import defaultdict
 
 from django.db.models import Q
 from django.urls import reverse
+from django.utils import timezone
 from django.views.generic import ListView
 from django.views.generic import CreateView
 from django.views.generic import DetailView
@@ -17,10 +19,11 @@ from django.contrib.auth import get_user_model
 from users.models.board_of_director import BoardOfDirector
 from users.models.board_of_director import RoleType
 from users.models.membership import Membership
-from meetings.models.vote import VoteChoice  
 from users.views.staff_panel import BoardRoleContextMixin
 from meetings.models.meeting import Meeting
 from meetings.models.meeting import MeetingType
+from meetings.models.meeting import MeetingStatus
+from meetings.models.minutes import MinutesStatus
 from meetings.models.motion import Motion
 from meetings.forms.meeting_create import MeetingForm
 from meetings.forms.meeting_create import AgendaItemFormSet
@@ -75,6 +78,27 @@ class MeetingListView(LoginRequiredMixin, ListView):
             Q(meeting_type=MeetingType.GENERAL) |
             Q(invites__invited_user=user)
         ).distinct().order_by('-date')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        queryset = self.get_queryset()
+        
+        now = timezone.now()
+        window_start = now - timedelta(hours=2)
+        window_end = now + timedelta(hours=2)
+        
+        scheduled_meetings = queryset.filter(status=MeetingStatus.SCHEDULED)
+        
+        for m in scheduled_meetings:
+            m.is_active = window_start <= m.date <= window_end
+            
+        context['upcoming_meetings'] = scheduled_meetings
+        context['past_meetings'] = queryset.filter(
+			status=MeetingStatus.HELD,
+			minutes__status=MinutesStatus.APPROVED
+		).select_related('minutes')
+				
+        return context
 
 
 class StaffMeetingListView(LoginRequiredMixin, BoardRoleContextMixin, ListView):
