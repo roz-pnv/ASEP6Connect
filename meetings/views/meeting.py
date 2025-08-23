@@ -3,6 +3,7 @@ from datetime import timedelta
 from collections import defaultdict
 
 from django.db.models import Q
+from django.utils import timezone
 from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import ListView
@@ -105,11 +106,10 @@ class StaffMeetingListView(LoginRequiredMixin, BoardRoleContextMixin, ListView):
     model = Meeting
     template_name = 'staff_panel/staff_meeting_management/meeting_list.html'
     context_object_name = 'meetings'
-    paginate_by = 10
+    paginate_by = None 
 
     def dispatch(self, request, *args, **kwargs):
         user = request.user
-
         is_board = getattr(user, 'is_boardofdirector', False)
 
         if not (is_board or user.is_superuser):
@@ -117,8 +117,14 @@ class StaffMeetingListView(LoginRequiredMixin, BoardRoleContextMixin, ListView):
 
         return super().dispatch(request, *args, **kwargs)
 
-    def get_queryset(self):
-        return Meeting.objects.all().order_by('-date')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        now = timezone.now()
+
+        context['upcoming_meetings'] = Meeting.objects.filter(date__gte=now).order_by('date')
+        context['past_meetings'] = Meeting.objects.filter(date__lt=now).order_by('-date')
+
+        return context
 
 
 class MeetingCreateView(LoginRequiredMixin, BoardRoleContextMixin, CreateView):

@@ -15,6 +15,7 @@
       {% if is_secretary %}
         <li><a href="#">Membership Requests</a></li>
         <li><a href="{% url 'user_list' %}">Manage Users</a></li>
+        <li><a href="{% url 'staff_meeting_list' %}">Manage Meeting</a></li>
       {% endif %}
 
       {% if is_treasurer %}

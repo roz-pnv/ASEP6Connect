@@ -1,12 +1,18 @@
+from django.utils import timezone
 from django.views.generic import CreateView
 from django.views.generic import UpdateView
 from django.views.generic import DeleteView
+from django.views.generic import DetailView
+from django.views.generic import View
 from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
+from django.shortcuts import render
 from django.urls import reverse
 
 from meetings.models import Invite
 from meetings.models import Meeting
 from meetings.forms.invite import InviteForm 
+from meetings.models.invite import InviteStatus
 from users.views.staff_panel import BoardRoleContextMixin
 
 class InviteCreateView(BoardRoleContextMixin, CreateView):
@@ -64,3 +70,41 @@ class InviteDeleteView(BoardRoleContextMixin, DeleteView):
     def get_success_url(self):
     	return reverse('staf_meeting_detail', kwargs={'pk': self.object.meeting.pk})
 
+
+class UserInviteListView(BoardRoleContextMixin, View):
+    model = Invite
+    template_name = 'user/invite_list.html'
+    context_object_name = 'invites'
+
+    def get(self, request, *args, **kwargs):
+        invites = Invite.objects.filter(invited_user=request.user).select_related('meeting')
+        return render(request, self.template_name, {'invites': invites})
+    
+    def post(self, request, *args, **kwargs):
+        invite_id = request.POST.get('invite_id')
+        response = request.POST.get('response')
+
+        invite = get_object_or_404(Invite, pk=invite_id, invited_user=request.user)
+
+        if response in [InviteStatus.ACCEPTED, InviteStatus.DECLINED]:
+            invite.status = response
+            invite.responded_at = timezone.now()
+            invite.save()
+
+        return redirect(request.path)
+
+
+class InvitationDetailView(DetailView):
+    model = Invite
+    template_name = 'user/invite_detail.html'
+    context_object_name = 'invite'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        meeting = self.object.meeting
+        context['meeting'] = meeting
+        context['agenda_items'] = meeting.agenda_items.all()
+        return context
+
+
+    

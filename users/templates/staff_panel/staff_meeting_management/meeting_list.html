@@ -12,12 +12,14 @@
 
 {% block main_content %}
 <div class="container-fluid mt-4">
-	
-  {% if meetings %}
-    <table class="table table-bordered mt-3">
+
+  <!-- Upcoming Meetings -->
+  <h4 class="mb-3">🟢 Upcoming Meetings</h4>
+  {% if upcoming_meetings %}
+    <table class="table table-bordered">
       <thead>
         <tr>
-		  <th>#</th>
+          <th>#</th>
           <th>Title</th>
           <th>Date</th>
           <th>Type</th>
@@ -26,34 +28,54 @@
         </tr>
       </thead>
       <tbody>
-        {% for meeting in meetings %}
+        {% for meeting in upcoming_meetings %}
         <tr>
-		  <td>{{ forloop.counter }}</td>
+          <td>{{ forloop.counter }}</td>
           <td>{{ meeting.title }}</td>
           <td>{{ meeting.date|date:"Y/m/d H:i" }}</td>
           <td>{{ meeting.get_meeting_type_display }}</td>
-          <td>{{ meeting.status }}</td>
+          <td>{{ meeting.get_status_display }}</td>
           <td><a href="{% url 'staff_meeting_detail' meeting.pk %}" class="btn btn-sm btn-outline-primary">View</a></td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
-
-    {% if is_paginated %}
-      <nav>
-        <ul class="pagination">
-          {% if page_obj.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
-          {% endif %}
-          <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
-          {% if page_obj.has_next %}
-            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
-          {% endif %}
-        </ul>
-      </nav>
-    {% endif %}
   {% else %}
-    <p>No meetings found.</p>
+    <p class="text-muted">No upcoming meetings.</p>
   {% endif %}
+
+  <hr class="my-4">
+
+  <!-- Past Meetings -->
+  <h4 class="mb-3">🔴 Past Meetings</h4>
+  {% if past_meetings %}
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Title</th>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for meeting in past_meetings %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ meeting.title }}</td>
+          <td>{{ meeting.date|date:"Y/m/d H:i" }}</td>
+          <td>{{ meeting.get_meeting_type_display }}</td>
+          <td>{{ meeting.get_status_display }}</td>
+          <td><a href="{% url 'staff_meeting_detail' meeting.pk %}" class="btn btn-sm btn-outline-primary">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="text-muted">No past meetings.</p>
+  {% endif %}
+
 </div>
 {% endblock %}
