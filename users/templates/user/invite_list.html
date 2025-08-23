@@ -1,0 +1,79 @@
+{% extends "user/dashboard.html" %}
+{% load static %}
+
+{% block main_content %}
+<div id="invitations-tab" class="tab-pane active">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">📅 Meeting Invitations</h5>
+      <span class="badge bg-light text-dark">{{ invites|length }} total</span>
+    </div>
+
+    <div class="card-body">
+      {% if invites %}
+        <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th scope="col">Meeting Title</th>
+                <th scope="col">Date</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for invite in invites %}
+                <tr>
+                  <td>{{ invite.meeting.title }}</td>
+                  <td>{{ invite.meeting.date|date:"Y-m-d H:i" }}</td>
+                  <td>
+                    {% if invite.status == 'accepted' %}
+                      <span class="badge bg-success">Accepted ✅</span>
+                    {% elif invite.status == 'declined' %}
+                      <span class="badge bg-danger">Declined ❌</span>
+                    {% else %}
+                      <span class="badge bg-secondary">Pending ⏳</span>
+                    {% endif %}
+                  </td>
+                  <td class="text-center">
+                    {% if invite.status == 'pending' %}
+                      <div style="display: inline-flex; gap: 10px; align-items: center;">
+                        <form method="post" style="display:inline;">
+                          {% csrf_token %}
+                          <input type="hidden" name="invite_id" value="{{ invite.pk }}">
+                          <input type="hidden" name="response" value="accepted">
+                          <button type="submit" style="color: #28a745; border: 2px solid #28a745; background: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                            Accepted
+                          </button>
+                        </form>
+
+                        <form method="post" style="display:inline;">
+                          {% csrf_token %}
+                          <input type="hidden" name="invite_id" value="{{ invite.pk }}">
+                          <input type="hidden" name="response" value="declined">
+                          <button type="submit" style="color: #dc3545; border: 2px solid #dc3545; background: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                            Declined
+                          </button>
+                        </form>
+                      </div>
+                    {% else %}
+                      <button class="btn btn-sm btn-outline-secondary" disabled>
+                        No Action
+                      </button>
+                    {% endif %}
+                    <a href="{% url 'my_invitation_detail' invite.pk %}" class="btn btn-sm btn-details ms-2">🔍 Details</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="alert alert-info text-center mb-0">
+          You have no invitations at the moment.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

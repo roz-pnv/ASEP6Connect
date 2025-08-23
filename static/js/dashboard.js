@@ -47,23 +47,27 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
-});
 
-document.querySelectorAll('.tab-link').forEach(link => {
-  link.addEventListener('click', () => {
-    // Remove active class from all tab links
-    document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
-    link.classList.add('active');
+  // Tab switching via delegation
+  document.querySelectorAll(".submenu").forEach(submenu => {
+    submenu.addEventListener("click", function (e) {
+      const tabItem = e.target.closest(".tab-link");
+      if (!tabItem || !tabItem.dataset.tab) return;
 
-    // Hide all tab panes
-    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+      // Remove active class from all tab links
+      document.querySelectorAll(".tab-link").forEach(l => l.classList.remove("active"));
+      tabItem.classList.add("active");
 
-    // Show selected tab pane
-    const targetId = link.dataset.tab;
-    const targetPane = document.getElementById(targetId);
-    if (targetPane) {
-      targetPane.classList.add('active');
-    }
+      // Hide all tab panes
+      document.querySelectorAll(".tab-pane").forEach(pane => pane.classList.remove("active"));
+
+      // Show selected tab pane
+      const targetPane = document.getElementById(tabItem.dataset.tab);
+      if (targetPane) {
+        targetPane.classList.add("active");
+      }
+
+      e.preventDefault(); 
+    });
   });
 });
-

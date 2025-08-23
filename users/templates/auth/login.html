@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% block content %}
 <div class="container mt-4">
   <h2>Login</h2>
@@ -17,5 +18,11 @@
     </div>
     <button type="submit" class="btn btn-primary">Login</button>
   </form>
+
+  <!-- Registration prompt -->
+  <div class="mt-4 text-center">
+    <p>Don't have an account?</p>
+    <a href="{% url 'register' %}" class="btn btn-outline-secondary">Register</a>
+  </div>
 </div>
 {% endblock %}

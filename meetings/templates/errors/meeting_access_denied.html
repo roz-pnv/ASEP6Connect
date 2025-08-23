@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="alert alert-danger" style="margin-top: 50px; text-align: center;">
+    <h2>⛔ Access Denied</h2>
+    <p>You must be a confirmed member to view this page.</p>
+
+    {% if user_id %}
+      <a href="{% url 'membership_request' user_id %}" class="btn btn-primary mt-3">Apply for Membership</a>
+    {% else %}
+      <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-secondary mt-3">Login to Apply</a>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "staff_panel/panel.html" %}
+
+{% block page_title %}Delete Meeting{% endblock %}
+
+{% block action_buttons %}
+  <a href="{% url 'staff_meeting_detail' object.pk %}" class="header-btn">← Back to Meeting</a>
+{% endblock %}
+
+{% block main_content %}
+<div class="container mt-4">
+  <p>Are you sure you want to delete the meeting <strong>{{ object.title }}</strong>?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, delete</button>
+    <a href="{% url 'staff_meeting_detail' object.pk %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

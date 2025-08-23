@@ -1,0 +1,81 @@
+{% extends "staff_panel/panel.html" %}
+{% load static %}
+
+{% block page_title %}📅 Meeting List{% endblock %}
+
+{% block action_buttons %}
+<div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+  <a href="{% url 'meeting_create' %}" class="header-btn">➕ Add Meeting</a>
+  <button id="toggleFilter" class="header-btn">🔍 Filter</button>
+</div>
+{% endblock %}
+
+{% block main_content %}
+<div class="container-fluid mt-4">
+
+  <!-- Upcoming Meetings -->
+  <h4 class="mb-3">🟢 Upcoming Meetings</h4>
+  {% if upcoming_meetings %}
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Title</th>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for meeting in upcoming_meetings %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ meeting.title }}</td>
+          <td>{{ meeting.date|date:"Y/m/d H:i" }}</td>
+          <td>{{ meeting.get_meeting_type_display }}</td>
+          <td>{{ meeting.get_status_display }}</td>
+          <td><a href="{% url 'staff_meeting_detail' meeting.pk %}" class="btn btn-sm btn-outline-primary">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="text-muted">No upcoming meetings.</p>
+  {% endif %}
+
+  <hr class="my-4">
+
+  <!-- Past Meetings -->
+  <h4 class="mb-3">🔴 Past Meetings</h4>
+  {% if past_meetings %}
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Title</th>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for meeting in past_meetings %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ meeting.title }}</td>
+          <td>{{ meeting.date|date:"Y/m/d H:i" }}</td>
+          <td>{{ meeting.get_meeting_type_display }}</td>
+          <td>{{ meeting.get_status_display }}</td>
+          <td><a href="{% url 'staff_meeting_detail' meeting.pk %}" class="btn btn-sm btn-outline-primary">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="text-muted">No past meetings.</p>
+  {% endif %}
+
+</div>
+{% endblock %}

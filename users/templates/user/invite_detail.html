@@ -1,0 +1,44 @@
+{% extends "user/dashboard.html" %}
+{% load static %}
+
+{% block main_content %}
+<div class="tab-pane active">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">Invitation to: {{ meeting.title }}</h4>
+    </div>
+    <div class="card-body">
+      <p><strong>Meeting Type:</strong> {{ meeting.get_meeting_type_display }}</p>
+      <p><strong>Date:</strong> {{ meeting.date|date:"Y-m-d H:i" }}</p>
+      <p><strong>Status:</strong> {{ meeting.get_status_display }}</p>
+      <p><strong>Location:</strong> {{ meeting.location|default:"Not specified" }}</p>
+      {% if meeting.online_link %}
+        <p><strong>Online Link:</strong> <a href="{{ meeting.online_link }}" target="_blank">{{ meeting.online_link }}</a></p>
+      {% endif %}
+
+      <hr>
+      <h5>📝 Agenda Items</h5>
+      {% if agenda_items %}
+        <ul class="list-group">
+          {% for item in agenda_items %}
+            <li class="list-group-item">
+              <strong>{{ item.order }}. {{ item.title }}</strong>
+              {% if item.description %}
+                <p>{{ item.description }}</p>
+              {% endif %}
+              {% if item.file %}
+                <p><a href="{{ item.file.url }}" target="_blank">📎 Download Attachment</a></p>
+              {% endif %}
+              {% if item.requires_vote %}
+                <span class="badge bg-warning text-dark">Requires Vote</span>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-muted">No agenda items defined for this meeting.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

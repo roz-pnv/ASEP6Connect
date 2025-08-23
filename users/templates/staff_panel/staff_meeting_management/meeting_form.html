@@ -1,0 +1,85 @@
+{% extends "staff_panel/panel.html" %}
+{% load static %}
+
+{% block page_title %}Create New Meeting{% endblock %}
+
+{% block action_buttons %}
+  <a href="{% url 'staff_meeting_list'  %}" class="header-btn">← Back to Meeting</a>
+{% endblock %}
+
+{% block main_content %}
+<div class="container-fluid px-4">
+  <form method="post" enctype="multipart/form-data" id="meetingForm">
+    {% csrf_token %}
+	
+    <!-- Step 1: Meeting Info -->
+    <div class="form-step" id="step1">
+      <h5>Meeting Details</h5>
+      {{ form.title.label_tag }} {{ form.title }}
+      {{ form.descriptive_title.label_tag }} {{ form.descriptive_title }}
+      {{ form.meeting_type.label_tag }} {{ form.meeting_type }}
+      {{ form.date.label_tag }} {{ form.date }}
+      {{ form.location.label_tag }} {{ form.location }}
+      <button type="button" class="btn btn-primary mt-3" onclick="nextStep(1)">Next</button>
+    </div>
+
+    <!-- Step 2: Agenda Items -->
+    <div class="form-step d-none" id="step2">
+      <h5>Agenda Items</h5>
+
+      <!-- Hidden Template for JS Cloning -->
+      {% with agenda_formset.empty_form as empty_form %}
+      <div id="agendaTemplate" class="d-none">
+        <div class="agenda-item mb-3 border rounded p-2">
+          {% for field in empty_form %}
+            <div class="mb-2">
+              {{ field.label_tag }}
+              {{ field }}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endwith %}
+
+      <div id="agendaContainer">
+        {{ agenda_formset.management_form }}
+        {% for form in agenda_formset %}
+          <div class="agenda-item mb-3 border rounded p-2">
+            {{ form.as_p }}
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="d-flex justify-content-between mt-3">
+        <button type="button" class="btn btn-secondary" onclick="prevStep(2)">Back</button>
+        <div>
+          <button type="button" class="btn btn-outline-primary me-2" id="addAgendaBtn">+ Add Agenda Item</button>
+          <button type="button" class="btn btn-primary" onclick="nextStep(2)">Next</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Invite Users -->
+    <div class="form-step d-none" id="step3">
+      <h5>Invite Users</h5>
+      <input type="text" id="userSearch" class="form-control mb-2" placeholder="Search users...">
+      <div id="userList" style="max-height: 300px; overflow-y: auto;">
+        {% for user in users %}
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="invited_users" value="{{ user.id }}" id="user{{ user.id }}">
+            <label class="form-check-label" for="user{{ user.id }}">
+              {{ user.get_full_name }} {% if user.is_boardofdirector %}(Board Member){% endif %}
+            </label>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="d-flex justify-content-between mt-3">
+        <button type="button" class="btn btn-secondary" onclick="prevStep(3)">Back</button>
+        <button type="submit" class="btn btn-success">Create Meeting</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script src="{% static 'js/meeting_form.js' %}"></script>
+{% endblock %}

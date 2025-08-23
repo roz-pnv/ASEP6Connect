@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Meetings{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <h2>🟢 Scheduled Meetings</h2>
+
+  {% if upcoming_meetings %}
+    <table class="table table-bordered mt-3">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Join</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for meeting in upcoming_meetings %}
+		<tr>
+			<td>{{ meeting.title }}</td>
+			<td>{{ meeting.date|date:"Y/m/d H:i" }}</td>
+			<td>{{ meeting.get_meeting_type_display }}</td>
+			<td><span class="badge bg-success">{{ meeting.get_status_display }}</span></td>
+			<td>
+				{% if meeting.is_active %}
+				<a href="{% url 'meeting_room' meeting.id %}" class="btn btn-sm btn-primary">Enter Room</a>
+				<span class="text-muted ms-2">🕒 Active now</span>
+				{% else %}
+				<span class="text-muted">Available 2 hours before start</span>
+				{% endif %}
+			</td>
+		</tr>
+		{% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No scheduled meetings.</p>
+  {% endif %}
+
+  <hr class="my-5">
+
+  <h2>📘 Held Meetings</h2>
+
+  {% if past_meetings %}
+    <table class="table table-bordered mt-3">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Minutes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for meeting in past_meetings %}
+        <tr>
+          <td>{{ meeting.title }}</td>
+          <td>{{ meeting.date|date:"Y/m/d H:i" }}</td>
+          <td>{{ meeting.get_meeting_type_display }}</td>
+          <td><span class="badge bg-secondary">{{ meeting.get_status_display }}</span></td>
+          <td>
+            {% if meeting.minutes %}
+              <a href="{{ meeting.minutes.file.url }}" class="btn btn-sm btn-outline-secondary" target="_blank">View Minutes</a>
+            {% else %}
+              <span class="text-muted">Not uploaded</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No held meetings.</p>
+  {% endif %}
+</div>
+{% endblock %}

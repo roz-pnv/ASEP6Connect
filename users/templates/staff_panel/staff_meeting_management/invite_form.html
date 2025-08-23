@@ -1,0 +1,18 @@
+{% extends "staff_panel/panel.html" %}
+
+{% block page_title %}Invite User{% endblock %}
+
+{% block action_buttons %}
+  <a href="{% url 'staff_meeting_detail' meeting.pk %}" class="header-btn">← Back to Meeting</a>
+{% endblock %}
+
+
+{% block main_content %}
+<div class="container mt-4">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Save</button>
+  </form>
+</div>
+{% endblock %}
