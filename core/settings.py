@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 	
     'users.apps.UsersConfig',
 	'meetings.apps.MeetingsConfig',
+	'finance.apps.FinanceConfig',
 ]
 
 MIDDLEWARE = [
