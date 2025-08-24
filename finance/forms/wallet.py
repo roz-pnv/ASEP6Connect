@@ -1,7 +1,6 @@
-# forms/wallet.py
 from django import forms
-from finance.models.wallet import Wallet
-from users.models.user import User
+
+from users.models.membership import MemberType
 
 class WalletFilterForm(forms.Form):
     """
@@ -28,4 +27,15 @@ class WalletFilterForm(forms.Form):
         required=False,
         widget=forms.DateInput(attrs={"type": "date"}),
         label="Created Before"
+    )
+    
+    member_type = forms.ChoiceField(
+        choices=[("", "----")] + list(MemberType.choices),
+        required=False,
+        label="Membership Type"
+    )
+    is_student = forms.ChoiceField(
+        choices=[("", "----"), ("true", "student"), ("false", "non-student")],
+        required=False,
+        label="Student status"
     )

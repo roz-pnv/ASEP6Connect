@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // مرحله‌بندی فرم
   window.nextStep = function (current) {
     document.getElementById(`step${current}`).classList.add('d-none');
     document.getElementById(`step${current + 1}`).classList.remove('d-none');
@@ -10,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById(`step${current - 1}`).classList.remove('d-none');
   };
 
-  // افزودن دستور جلسه
   const addAgendaBtn = document.getElementById('addAgendaBtn');
 	if (addAgendaBtn) {
 	addAgendaBtn.addEventListener('click', function () {
@@ -21,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
 		const template = document.querySelector('#agendaTemplate .agenda-item');
 		const newForm = template.cloneNode(true);
 
-		// اصلاح name و id
 		newForm.querySelectorAll('input, textarea, select').forEach(input => {
 		const name = input.getAttribute('name');
 		const id = input.getAttribute('id');
@@ -35,8 +32,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	});
   }
 
-
-  // سرچ کاربران
   const userSearch = document.getElementById('userSearch');
   if (userSearch) {
     userSearch.addEventListener('input', function () {

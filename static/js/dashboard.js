@@ -1,12 +1,32 @@
+console.log("dashboard.js loaded ✅");
+
 document.addEventListener("DOMContentLoaded", function () {
-  // Toggle right sidebar (Filter panel)
-  const toggleFilterBtn = document.getElementById("toggleFilter");
-  const closeFilterBtn = document.getElementById("closeFilter");
   const rightSidebar = document.querySelector(".sidebar-right");
+  const filterTargetInput = document.getElementById("filterTarget");
+
+  const toggleFilterWallets = document.getElementById("toggleFilterWallets");
+  const toggleFilterRequests = document.getElementById("toggleFilterRequests");
+  const closeFilterBtn = document.getElementById("closeFilter");
+
+  const toggleFilterBtn = document.getElementById("toggleFilter");
 
   if (toggleFilterBtn && rightSidebar) {
     toggleFilterBtn.addEventListener("click", () => {
-      rightSidebar.classList.toggle("active");
+      rightSidebar.classList.add("active");
+    });
+  }
+
+  if (toggleFilterWallets && rightSidebar && filterTargetInput) {
+    toggleFilterWallets.addEventListener("click", function () {
+      filterTargetInput.value = "wallets";
+      rightSidebar.classList.add("active");
+    });
+  }
+
+  if (toggleFilterRequests && rightSidebar && filterTargetInput) {
+    toggleFilterRequests.addEventListener("click", () => {
+      filterTargetInput.value = "requests";
+      rightSidebar.classList.add("active");
     });
   }
 
@@ -24,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
     rightSidebar.style.height = `calc(100vh - ${headerHeight}px)`;
   }
 
-  // Toggle left sidebar (☰ button)
+  // Left sidebar toggle
   const toggleSidebarBtn = document.getElementById("toggleSidebar");
   const leftSidebar = document.getElementById("sidebar");
 
@@ -34,40 +54,33 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Toggle submenu under "My Info"
-  const mainLinks = document.querySelectorAll(".main-link");
-
-  mainLinks.forEach(link => {
+  // Submenu toggle
+  document.querySelectorAll(".main-link").forEach(link => {
     link.addEventListener("click", () => {
       const submenuId = link.dataset.parent + "-submenu";
       const submenu = document.getElementById(submenuId);
-
       if (submenu) {
         submenu.style.display = submenu.style.display === "none" ? "block" : "none";
       }
     });
   });
 
-  // Tab switching via delegation
+  // Tab switching
   document.querySelectorAll(".submenu").forEach(submenu => {
     submenu.addEventListener("click", function (e) {
       const tabItem = e.target.closest(".tab-link");
       if (!tabItem || !tabItem.dataset.tab) return;
 
-      // Remove active class from all tab links
       document.querySelectorAll(".tab-link").forEach(l => l.classList.remove("active"));
       tabItem.classList.add("active");
 
-      // Hide all tab panes
       document.querySelectorAll(".tab-pane").forEach(pane => pane.classList.remove("active"));
-
-      // Show selected tab pane
       const targetPane = document.getElementById(tabItem.dataset.tab);
       if (targetPane) {
         targetPane.classList.add("active");
       }
 
-      e.preventDefault(); 
+      e.preventDefault();
     });
   });
 });

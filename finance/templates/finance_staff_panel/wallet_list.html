@@ -1,84 +1,174 @@
 {% extends "staff_panel/panel.html" %}
 {% load static %}
+{% load custom_filters %}
 
-{% block page_title %}💼 Wallet Overview{% endblock %}
-
-{% block action_buttons %}
-<div class="card-header-flex">
-  <div class="action-buttons">
-    <button id="toggleFilter" class="btn btn-purple">🔍 Filter</button>
-  </div>
-</div>
-{% endblock %}
-
+{% block page_title %}💼 Wallet & Membership Overview{% endblock %}
 {% block main_class %}with-sidebar{% endblock %}
 
 {% block main_content %}
-<div class="wallet-dashboard">
+<div class="wallet-admin-panel">
 
-  <!-- Wallets Table -->
-  <div class="wallet-card transactions-card">
-    <table class="transaction-table">
-      <thead>
+  <!-- 💼 Wallets Section -->
+  <section class="wallet-section mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="section-title">💼 All Wallets</h4>
+      <button id="toggleFilterWallets" class="btn btn-sm btn-purple">🔍 Filter</button>
+    </div>
+    <table class="table table-hover table-bordered">
+      <thead class="table-light">
         <tr>
           <th>#</th>
           <th>User</th>
           <th>Balance</th>
+          <th>Membership</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         {% for wallet in wallets %}
+          {% with membership=latest_membership_map|dict:wallet.user.id %}
           <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ wallet.user.get_full_name }} ({{ wallet.user.username }})</td>
-            <td class="balance-amount">{{ wallet.balance }} تومان</td>
             <td>
-              <a href="{% url 'admin_transaction_list' %}?user_query={{ wallet.user.username }}" class="btn btn-sm btn-purple">View</a>
-              <a href="#" class="btn btn-sm btn-warning">Edit</a>
+              <strong>{{ wallet.user.get_full_name }}</strong><br>
+              <small class="text-muted">@{{ wallet.user.username }}</small>
+            </td>
+            <td>{{ wallet.balance|floatformat:2 }}</td>
+            <td>
+              {% if membership %}
+                {{ membership.get_member_type_display }}
+                {% if membership.is_active %}<span class="badge bg-success ms-1">Active</span>{% endif %}
+                {% if not membership.is_confirmed %}<span class="badge bg-warning text-dark ms-1">Unconfirmed</span>{% endif %}
+              {% else %}
+                <span class="text-muted">—</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'admin_wallet_detail' wallet.id %}" class="btn btn-sm btn-outline-primary">View</a>
             </td>
           </tr>
+          {% endwith %}
         {% empty %}
-          <tr>
-            <td colspan="4" class="transaction-empty">No wallets found.</td>
-          </tr>
+          <tr><td colspan="5" class="text-center text-muted">No wallets found.</td></tr>
         {% endfor %}
       </tbody>
     </table>
-  </div>
+  </section>
+
+  <!-- 📥 Membership Requests Section -->
+  <section class="membership-request-section">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="section-title">📥 Membership Requests</h4>
+      <button id="toggleFilterRequests" class="btn btn-sm btn-warning">🔍 Filter</button>
+    </div>
+    <table class="table table-hover table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>#</th>
+          <th>User</th>
+          <th>Requested Type</th>
+          <th>Balance</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for wallet in membership_request_wallets %}
+          {% with request=request_membership_map|dict:wallet.user.id %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>
+              <strong>{{ wallet.user.get_full_name }}</strong><br>
+              <small class="text-muted">@{{ wallet.user.username }}</small>
+            </td>
+            <td>
+              {% if request %}
+                <span class="badge bg-warning text-dark">{{ request.get_member_type_display }}</span>
+              {% else %}
+                <span class="text-muted">—</span>
+              {% endif %}
+            </td>
+            <td>{{ wallet.balance|floatformat:2 }}</td>
+            <td>
+              <a href="{% url 'admin_wallet_detail' wallet.id %}" class="btn btn-sm btn-outline-primary">View</a>
+            </td>
+          </tr>
+          {% endwith %}
+        {% empty %}
+          <tr><td colspan="5" class="text-center text-muted">No membership requests found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
 
 </div>
 {% endblock %}
 
 {% block right_sidebar %}
-<aside class="sidebar-right">
-  <div class="filter-header">
-    <h5>🔍 Filter Wallets</h5>
-    <button id="closeFilter" class="btn btn-sm btn-outline-secondary">✖</button>
+<aside id="wallet-sidebar" class="sidebar-right">
+  <div class="filter-header d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+    <h5 class="mb-0">🔍 Filter Wallets & Requests</h5>
+    <button id="closeFilter" class="btn btn-sm btn-outline-light">✖</button>
   </div>
+
   <form method="get" class="filter-form px-3">
+    <!-- این فیلد توسط JS مقداردهی می‌شود -->
+    <input type="hidden" name="target" id="filterTarget" value="wallets">
+
+    {% if wallet_filter_form.user_query %}
     <div class="form-group mb-3">
-	  {{ filter_form.user_query.label_tag }}
-	  {{ filter_form.user_query }}
-	</div>
-    <div class="form-group mb-3">
-      {{ filter_form.min_balance.label_tag }}
-      {{ filter_form.min_balance }}
+      {{ wallet_filter_form.user_query.label_tag }}
+      {{ wallet_filter_form.user_query }}
     </div>
+    {% endif %}
+
+    {% if wallet_filter_form.min_balance %}
     <div class="form-group mb-3">
-      {{ filter_form.max_balance.label_tag }}
-      {{ filter_form.max_balance }}
+      {{ wallet_filter_form.min_balance.label_tag }}
+      {{ wallet_filter_form.min_balance }}
     </div>
+    {% endif %}
+
+    {% if wallet_filter_form.max_balance %}
     <div class="form-group mb-3">
-      {{ filter_form.created_after.label_tag }}
-      {{ filter_form.created_after }}
+      {{ wallet_filter_form.max_balance.label_tag }}
+      {{ wallet_filter_form.max_balance }}
     </div>
+    {% endif %}
+
+    {% if wallet_filter_form.created_after %}
     <div class="form-group mb-3">
-      {{ filter_form.created_before.label_tag }}
-      {{ filter_form.created_before }}
+      {{ wallet_filter_form.created_after.label_tag }}
+      {{ wallet_filter_form.created_after }}
     </div>
+    {% endif %}
+
+    {% if wallet_filter_form.created_before %}
+    <div class="form-group mb-3">
+      {{ wallet_filter_form.created_before.label_tag }}
+      {{ wallet_filter_form.created_before }}
+    </div>
+    {% endif %}
+
+    {% if wallet_filter_form.member_type %}
+    <div class="form-group mb-3">
+      {{ wallet_filter_form.member_type.label_tag }}
+      {{ wallet_filter_form.member_type }}
+    </div>
+    {% endif %}
+
+    {% if wallet_filter_form.is_student %}
+    <div class="form-group mb-3">
+      {{ wallet_filter_form.is_student.label_tag }}
+      {{ wallet_filter_form.is_student }}
+    </div>
+    {% endif %}
+
     <button type="submit" class="btn btn-purple w-100">Apply Filter</button>
-    <a href="{% url 'admin_wallet_list' %}" class="btn btn-outline-secondary">Reset</a>
+    <a href="{% url 'admin_wallet_list' %}" class="btn btn-outline-light w-100 mt-2">Reset</a>
   </form>
 </aside>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/dashboard.js' %}"></script>
 {% endblock %}

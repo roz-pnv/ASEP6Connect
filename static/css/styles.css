@@ -184,25 +184,6 @@ footer {
   display: block;
 }
 
-.sidebar-right {
-  position: fixed;
-  top: 80px;
-  right: -300px;
-  width: 300px;
-  height: calc(100vh - 80px);
-  background:linear-gradient(to bottom, #4B0082, #6A5ACD);
-  border-left: linear-gradient(to bottom, #4B0082, #6A5ACD);
-  box-shadow: -2px 0 6px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  overflow-y: auto;
-  transition: right 0.3s ease;
-  z-index: 1000;
-}
-
-.sidebar-right.active {
-  right: 0;
-}
-
 
 /* ===========================
    Sidebar Right Filter Styles
@@ -210,7 +191,7 @@ footer {
 .sidebar-right {
   position: fixed;
   top: 80px;
-  right: -320px;
+  right: -320px; 
   width: 320px;
   height: calc(100vh - 80px);
   background: linear-gradient(to bottom, #4B0082, #6A5ACD);
@@ -224,8 +205,9 @@ footer {
 }
 
 .sidebar-right.active {
-  right: 0;
+  right: 0; 
 }
+
 
 /* Header inside filter panel */
 .filter-header {

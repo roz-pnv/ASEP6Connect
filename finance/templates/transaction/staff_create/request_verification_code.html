@@ -1,0 +1,16 @@
+{% extends "staff_panel/panel.html" %}
+{% block page_title %}🔐 Request Verification Code{% endblock %}
+
+{% block main_content %}
+<div class="card p-4 shadow-sm text-center">
+  <h5 class="mb-4">Click the button below to receive your verification code</h5>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="d-flex justify-content-center gap-3">
+      <a href="{% url 'transaction-method' %}" class="btn btn-outline-secondary">← Back</a>
+      <button type="submit" class="btn btn-purple">📩 Send Verification Code</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

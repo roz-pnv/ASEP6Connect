@@ -1,0 +1,46 @@
+{% extends "staff_panel/panel.html" %}
+{% block page_title %}🧾 Transaction Receipt{% endblock %}
+
+{% block action_buttons %}
+<div class="card-header-flex">
+  <div class="action-buttons">
+    <a href="{% url 'admin_wallet_detail' wallet_id=wallet.id %}" class="btn btn-outline-secondary w-100 mt-2">← Back to Wallet</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block main_class %}with-form{% endblock %}
+
+{% block main_content %}
+<div class="wallet-dashboard">
+  <div class="wallet-card transaction-create-card">
+    <h3 class="mb-4">Transaction Details</h3>
+
+    <ul class="list-group mb-4">
+      <li class="list-group-item"><strong>ID:</strong> {{ transaction.id }}</li>
+      <li class="list-group-item"><strong>User:</strong> {{ wallet.user.username }}</li>
+      <li class="list-group-item"><strong>Amount:</strong> {{ transaction.amount|floatformat:0 }} Toman</li>
+      <li class="list-group-item"><strong>Type:</strong> {{ transaction.get_type_display }}</li>
+      <li class="list-group-item"><strong>Method:</strong> {{ transaction.get_payment_method_display }}</li>
+      <li class="list-group-item"><strong>Status:</strong> {{ transaction.get_status_display }}</li>
+      <li class="list-group-item"><strong>Date:</strong> {{ transaction.created_at|date:"Y/m/d H:i" }}</li>
+      {% if transaction.note %}
+        <li class="list-group-item"><strong>Note:</strong> {{ transaction.note }}</li>
+      {% endif %}
+    </ul>
+
+    {% if show_confirm_button %}
+      <form method="post" action="{% url 'confirm_membership' membership_id=membership.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success w-100">
+          ✅ Confirm Membership & Enable Voting
+        </button>
+      </form>
+    {% elif membership and membership.is_confirmed %}
+      <div class="alert alert-info text-center">
+        Membership already confirmed on {{ membership.confirmed_at|date:"Y/m/d H:i" }}
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

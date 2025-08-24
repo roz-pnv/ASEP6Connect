@@ -6,7 +6,6 @@
 {% block action_buttons %}
 <div class="card-header-flex">
   <div class="action-buttons">
-    <a href="#" class="btn btn-purple">➕ Add Transaction</a>
     <button id="toggleFilter" class="btn btn-purple">🔍 Filter</button>
   </div>
 </div>
@@ -35,7 +34,11 @@
         {% for tx in transactions %}
           <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ tx.wallet.user.username }}</td>
+            <td>
+              <a href="{% url 'admin_wallet_detail' wallet_id=tx.wallet.id %}" class="text-decoration-none text-purple fw-bold">
+                {{ tx.wallet.user.username }}
+              </a>
+            </td>
             <td>{{ tx.get_type_display }}</td>
             <td>{{ tx.amount }}</td>
             <td>
@@ -70,19 +73,28 @@
       {{ filter_form.user_query }}
     </div>
     <div class="form-group mb-3">
-      {{ filter_form.type.label_tag }}  
+      {{ filter_form.type.label_tag }}
       {{ filter_form.type }}
     </div>
     <div class="form-group mb-3">
-      {{ filter_form.status.label_tag }}  
+      {{ filter_form.status.label_tag }}
       {{ filter_form.status }}
     </div>
     <div class="form-group mb-3">
-      {{ filter_form.payment_method.label_tag }}  
+      {{ filter_form.payment_method.label_tag }}
       {{ filter_form.payment_method }}
     </div>
+    <div class="form-group mb-3">
+      {{ filter_form.member_type.label_tag }}
+      {{ filter_form.member_type }}
+    </div>
+    <div class="form-group mb-3">
+      {{ filter_form.is_student.label_tag }}
+      {{ filter_form.is_student }}
+    </div>
     <button type="submit" class="btn btn-purple w-100">Apply Filter</button>
-    <a href="{% url 'admin_transaction_list' %}" class="btn btn-outline-secondary">Reset</a>
+    <a href="{% url 'admin_transaction_list' %}" class="btn btn-outline-secondary w-100 mt-2">Reset</a>
   </form>
 </aside>
 {% endblock %}
+

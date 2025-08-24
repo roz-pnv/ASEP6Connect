@@ -1,0 +1,176 @@
+{% extends "staff_panel/panel.html" %}
+{% load static %}
+
+{% block page_title %}🧾 Wallet Detail{% endblock %}
+
+{% block action_buttons %}
+<div class="card-header-flex">
+  <div class="action-buttons">
+    <a href="{% url 'admin_wallet_list' %}" class="btn btn-outline-secondary">← Back to Wallets</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block main_class %}with-sidebar{% endblock %}
+
+{% block main_content %}
+<div class="wallet-dashboard">
+
+  <!-- Wallet & Membership Info Side by Side -->
+	<div class="d-flex flex-wrap gap-3 mb-4">
+	<!-- Wallet Info -->
+	<div class="wallet-card wallet-summary flex-fill">
+		<h4>👤 Wallet Information</h4>
+		<ul class="list-unstyled">
+		<li><strong>User:</strong> {{ wallet.user.get_full_name }} ({{ wallet.user.username }})</li>
+		<li><strong>Balance:</strong> {{ wallet.balance|floatformat:0 }} Toman</li>
+		<li><strong>Created At:</strong> {{ wallet.created_at|date:"Y-m-d H:i" }}</li>
+		</ul>
+	</div>
+
+	<!-- Latest Membership Info -->
+	{% if latest_membership %}
+	<div class="wallet-card latest-membership-card flex-fill">
+		<h4>🟢 Latest Membership</h4>
+		<ul class="list-unstyled">
+		<li><strong>Title:</strong> {{ latest_membership.title }}</li>
+		<li><strong>Type:</strong> {{ latest_membership.get_member_type_display }}</li>
+		<li><strong>Start Date:</strong> {{ latest_membership.created_at|date:"Y-m-d" }}</li>
+		<li><strong>Expiry Date:</strong> {% if latest_membership.membership_expiry %}{{ latest_membership.membership_expiry|date:"Y-m-d" }}{% else %}-{% endif %}</li>
+		<li><strong>Status:</strong>
+			{% if latest_membership.is_active %}
+			<span class="badge bg-success">Active</span>
+			{% else %}
+			<span class="badge bg-secondary">Inactive</span>
+			{% endif %}
+		</li>
+		<li><strong>Confirmed At:</strong> {% if latest_membership.confirmed_at %}{{ latest_membership.confirmed_at|date:"Y-m-d H:i" }}{% else %}-{% endif %}</li>
+		<li><strong>Can Vote:</strong> {{ latest_membership.can_vote|yesno:"Yes,No" }}</li>
+		</ul>
+	</div>
+	{% endif %}
+	</div>
+
+
+	<!-- Other Memberships -->
+	{% if memberships|length > 1 %}
+	<div class="wallet-card membership-list-card mb-4">
+		<h4>📚 Previous Memberships</h4>
+		<table class="table table-bordered">
+		<thead>
+			<tr>
+			<th>#</th>
+			<th>Title</th>
+			<th>Type</th>
+			<th>Start</th>
+			<th>End</th>
+			<th>Status</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for m in memberships %}
+			{% if m != latest_membership %}
+				<tr>
+				<td>{{ forloop.counter }}</td>
+				<td>{{ m.title }}</td>
+				<td>{{ m.get_member_type_display }}</td>
+				<td>{{ m.created_at|date:"Y-m-d" }}</td>
+				<td>{% if m.membership_expiry %}{{ m.membership_expiry|date:"Y-m-d" }}{% else %}-{% endif %}</td>
+				<td>
+					{% if m.is_active %}
+					<span class="badge bg-success">Active</span>
+					{% else %}
+					<span class="badge bg-secondary">Inactive</span>
+					{% endif %}
+				</td>
+				</tr>
+			{% endif %}
+			{% endfor %}
+		</tbody>
+		</table>
+	</div>
+	{% endif %}
+
+
+  <!-- Transaction List -->
+	<div class="wallet-card transactions-card">
+	<div class="d-flex justify-content-between align-items-center mb-3">
+		<h4>📄 Transaction List</h4>
+		<div class="d-flex gap-2">
+		<a href="{% url 'transaction-purpose' wallet.id %}" class="btn btn-outline-secondary">➕ Add Transaction</a>
+		<button id="toggleFilter" class="btn btn-purple">🔍 Filter</button>
+		</div>
+	</div>
+
+	<table class="table table-striped">
+		<thead>
+		<tr>
+			<th>#</th>
+			<th>Type</th>
+			<th>Amount</th>
+			<th>Status</th>
+			<th>Method</th>
+			<th>Date</th>
+			<th>Details</th>
+		</tr>
+		</thead>
+		<tbody>
+		{% for tx in transactions %}
+			<tr>
+			<td>{{ forloop.counter }}</td>
+			<td>{{ tx.get_type_display }}</td>
+			<td>{{ tx.amount|floatformat:0 }}</td>
+			<td>
+				<span class="badge {% if tx.status == 'success' %}bg-success{% elif tx.status == 'failed' %}bg-danger{% else %}bg-warning{% endif %}">
+				{{ tx.get_status_display }}
+				</span>
+			</td>
+			<td>{{ tx.get_payment_method_display }}</td>
+			<td>{{ tx.created_at|date:"Y-m-d H:i" }}</td>
+			<td>
+				{% if tx.id %}
+				<a href="{% url 'transaction_receipt' transaction_id=tx.id %}" class="btn btn-sm btn-outline-primary">
+					View Receipt
+				</a>
+				{% else %}
+				<span class="text-muted">No receipt available</span>
+				{% endif %}
+			</td>
+			</tr>
+		{% empty %}
+			<tr>
+			<td colspan="7" class="text-center text-muted">No transactions found.</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	</div>
+
+
+</div>
+{% endblock %}
+
+{% block right_sidebar %}
+<aside class="sidebar-right">
+  <div class="filter-header">
+    <h5>🔍 Filter Transactions</h5>
+    <button id="closeFilter" class="btn btn-sm btn-outline-secondary">✖</button>
+  </div>
+  <form method="get" class="filter-form px-3">
+    <div class="form-group mb-3">
+      {{ filter_form.type.label_tag }}
+      {{ filter_form.type }}
+    </div>
+    <div class="form-group mb-3">
+      {{ filter_form.status.label_tag }}
+      {{ filter_form.status }}
+    </div>
+    <div class="form-group mb-3">
+      {{ filter_form.payment_method.label_tag }}
+      {{ filter_form.payment_method }}
+    </div>
+    <button type="submit" class="btn btn-purple w-100">Apply Filter</button>
+    <a href="{% url 'admin_wallet_detail' wallet.id %}" class="btn btn-outline-secondary w-100 mt-2">Reset</a>
+  </form>
+</aside>
+{% endblock %}

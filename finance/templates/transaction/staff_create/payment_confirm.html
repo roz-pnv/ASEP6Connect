@@ -1,0 +1,48 @@
+{% extends "staff_panel/panel.html" %}
+{% block page_title %}Payment Confirmation{% endblock %}
+
+{% block main_content %}
+<div class="container mt-4">
+    {% if transaction.status == 'success' %}
+		<div class="alert alert-success text-center fw-bold">
+			✅ Transaction completed successfully.
+		</div>
+	{% elif transaction.status == 'failed' %}
+		<div class="alert alert-danger text-center fw-bold">
+			❌ Transaction failed.
+		</div>
+	{% else %}
+		<div class="alert alert-warning text-center fw-bold">
+			⏳ Transaction is still pending.
+		</div>
+	{% endif %}
+
+
+    <div class="card shadow-sm mt-3">
+        <div class="card-header bg-dark text-white text-center">
+            Transaction Details
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Transaction ID:</strong> {{ transaction.pk }}</li>
+            <li class="list-group-item"><strong>Amount:</strong> {{ transaction.amount|floatformat:0 }} Toman</li>
+            <li class="list-group-item"><strong>Method:</strong> {{ transaction.payment_method }}</li>
+            <li class="list-group-item"><strong>Status:</strong> 
+                {% if transaction.status == 'success' %}
+                    <span class="text-success fw-bold">Successful</span>
+                {% elif transaction.status == 'failed' %}
+                    <span class="text-danger fw-bold">Failed</span>
+                {% else %}
+                    <span class="text-warning fw-bold">Pending</span>
+                {% endif %}
+            </li>
+            <li class="list-group-item"><strong>Date & Time:</strong> {{ transaction.created_at|date:"Y/m/d H:i" }}</li>
+        </ul>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'admin_wallet_detail' wallet_id=transaction.wallet.id %}" class="btn btn-outline-primary px-4">
+            Back to Wallet
+        </a>
+    </div>
+</div>
+{% endblock %}

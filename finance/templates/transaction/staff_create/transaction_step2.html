@@ -1,0 +1,32 @@
+{% extends "staff_panel/panel.html" %}
+{% block page_title %}Transaction Method{% endblock %}
+
+{% block main_content %}
+<form method="post" class="form">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+
+  <div class="mb-3">
+    {{ form.payment_method.label_tag }}
+    {{ form.payment_method }}
+  </div>
+
+  <div class="mb-3">
+    {{ form.amount.label_tag }}
+    {{ form.amount }}
+  </div>
+
+  {% if form.membership %}
+  <div class="mb-3">
+    {{ form.membership.label_tag }}
+    {{ form.membership }}
+    <small class="form-text text-muted">{{ form.membership.help_text }}</small>
+  </div>
+  {% endif %}
+
+  <div class="d-flex justify-content-between mt-4">
+    <a href="{% url 'transaction-purpose' wallet.id %}" class="btn btn-outline-secondary">Back</a>
+    <button type="submit" class="btn btn-purple">Next</button>
+  </div>
+</form>
+{% endblock %}
