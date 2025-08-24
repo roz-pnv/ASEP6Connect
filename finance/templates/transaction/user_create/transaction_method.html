@@ -1,0 +1,13 @@
+{% extends "user/dashboard.html" %}
+{% block main_content %}
+<div class="wallet-card">
+  <h4>Select Payment Method</h4>
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      {{ form.payment_method }}
+    </div>
+    <button type="submit" class="btn btn-purple mt-3">Continue</button>
+  </form>
+</div>
+{% endblock %}

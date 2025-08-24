@@ -47,6 +47,16 @@
 		<li><strong>Confirmed At:</strong> {% if latest_membership.confirmed_at %}{{ latest_membership.confirmed_at|date:"Y-m-d H:i" }}{% else %}-{% endif %}</li>
 		<li><strong>Can Vote:</strong> {{ latest_membership.can_vote|yesno:"Yes,No" }}</li>
 		</ul>
+		{% if latest_membership and not latest_membership.is_confirmed %}
+			{% if not has_transaction %}
+				<form method="post" action="{% url 'create_pending_transaction' wallet.id %}">
+					{% csrf_token %}
+					<button type="submit" class="btn btn-primary">Create Membership Fee Transaction</button>
+				</form>
+			{% else %}
+				<p class="text-muted">A transaction has already been created for this membership.</p>
+			{% endif %}
+		{% endif %}
 	</div>
 	{% endif %}
 	</div>

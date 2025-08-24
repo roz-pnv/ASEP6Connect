@@ -43,34 +43,90 @@ class TransactionFilterForm(forms.Form):
         label="Student Status"
     )
 
-class TransactionPurposeForm(forms.Form):
-    type = forms.ChoiceField(choices=TransactionType.choices, label="Transaction Type")
-    note = forms.CharField(widget=forms.Textarea(attrs={"rows": 3}), required=False, label="Note")
-    
 
-class TransactionMethodForm(forms.Form):
-    payment_method = forms.ChoiceField(choices=PaymentMethod.choices, label="Payment Method")
-    amount = forms.IntegerField(min_value=1, label="Amount")
+class TransactionPurposeForm(forms.ModelForm):
+    class Meta:
+        model = Transaction
+        fields = ['type', 'note']
+        widgets = {
+            'type': forms.Select(attrs={'class': 'form-control'}),
+            'note': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Optional note',
+                'rows': 3
+            }),
+        }
 
-    def __init__(self, *args, transaction_type=None, wallet=None, **kwargs):
+    def __init__(self, *args, **kwargs):
+        transaction_type = kwargs.pop('transaction_type', None)
+        wallet = kwargs.pop('wallet', None)
         super().__init__(*args, **kwargs)
 
-        if transaction_type == "membership_fee" and wallet:
-            self.fields["membership"] = forms.ModelChoiceField(
-                queryset=Membership.objects.filter(user=wallet.user),
-                required=True,
-                label="Select Membership",
-                help_text="Choose the membership this transaction is for"
-            )
+        self.fields['type'].label = "Transaction Type"
+        self.fields['note'].label = "Note"
+
+        if transaction_type:
+            self.fields['type'].initial = transaction_type
+            self.fields['type'].disabled = True
+
+
+class TransactionMethodForm(forms.ModelForm):
+    class Meta:
+        model = Transaction
+        fields = ['payment_method', 'amount']
+        widgets = {
+            'payment_method': forms.Select(attrs={'class': 'form-control'}),
+            'amount': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter amount'
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        transaction_type = kwargs.pop('transaction_type', None)
+        wallet = kwargs.pop('wallet', None)
+        super().__init__(*args, **kwargs)
+
+        self.fields['payment_method'].label = "Payment Method"
+        
+        if wallet and transaction_type:
+            data = kwargs.get("initial", {})
+            session_data = kwargs.get("data", {})
             
-class TransactionExtraForm(forms.Form):
-    related_project = forms.CharField(max_length=255, required=False, label="Related Project")
-    # You can add membership or other optional fields here if needed
+            amount = session_data.get("amount") or data.get("amount")
+            if amount:
+                self.fields['amount'].initial = amount
+                self.fields['amount'].disabled = True
+
+        allowed = [PaymentMethod.WALLET, PaymentMethod.ONLINE]
+        
+        self.fields['payment_method'].choices = [
+			(key, label) for key, label in self.fields['payment_method'].choices
+			if key in allowed
+		]
+
+    def clean_amount(self):
+        if self.fields['amount'].disabled:
+            return self.initial.get('amount')
+        amount = self.cleaned_data.get('amount')
+        if amount <= 0:
+            raise forms.ValidationError("Amount must be greater than zero.")
+        return amount
 
 
 class VerificationForm(forms.Form):
-    verification_code = forms.IntegerField(
-        min_value=100000, 
-        max_value=999999,
-        label='Enter verification code'
+    code = forms.CharField(
+        max_length=6,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter verification code'
+        })
     )
+
+    def clean_code(self):
+        code = self.cleaned_data.get('code')
+        if not code.isdigit():
+            raise forms.ValidationError("Code must be numeric.")
+        if len(code) != 6:
+            raise forms.ValidationError("Code must be 6 digits.")
+        return code

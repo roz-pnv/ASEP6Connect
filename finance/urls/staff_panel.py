@@ -10,6 +10,7 @@ from finance.views.staff_transaction_create import TransactionWalletFinalizeView
 from finance.views.staff_transaction_create import TransactionCodeRequestView
 from finance.views.staff_transaction_create import TransactionVerificationView
 from finance.views.staff_transaction_create import TransactionConfirmationView
+from finance.views.staff_transaction_create import CreatePendingTransactionView
 from finance.views.staff_wallet import WalletAdminView
 from finance.views.staff_wallet import WalletDetailAdminView
 
@@ -26,6 +27,7 @@ urlpatterns = [
 
 	path("wallet/", WalletAdminView.as_view(), name="admin_wallet_list"),
 	path("wallet/<int:wallet_id>/", WalletDetailAdminView.as_view(), name="admin_wallet_detail"),
+	path("wallet/<int:wallet_id>/create-pending-transaction/", CreatePendingTransactionView.as_view(), name="create_pending_transaction"),
 
 	path("memberships/confirm/<int:membership_id>/", ConfirmMembershipView.as_view(), name="confirm_membership"),
 ]

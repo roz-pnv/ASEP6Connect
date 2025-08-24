@@ -1,0 +1,26 @@
+{% extends "user/dashboard.html" %}
+{% load static %}
+
+{% block page_title %}Transaction Details{% endblock %}
+
+{% block main_content %}
+<div class="wallet-card transaction-detail-card">
+  <h3>🔍 Transaction Details</h3>
+  <ul class="list-unstyled">
+    <li><strong>Type:</strong> {{ transaction.get_type_display }}</li>
+    <li><strong>Amount:</strong> {{ transaction.amount }} units</li>
+    <li><strong>Status:</strong> {{ transaction.get_status_display }}</li>
+    <li><strong>Method:</strong> {{ transaction.get_payment_method_display }}</li>
+    <li><strong>Created At:</strong> {{ transaction.created_at|date:"Y-m-d H:i" }}</li>
+    <li><strong>Expires At:</strong> {% if transaction.expires_at %}{{ transaction.expires_at|date:"Y-m-d H:i" }}{% else %}-{% endif %}</li>
+    <li><strong>Note:</strong> {{ transaction.note|default:"—" }}</li>
+    {% if transaction.membership %}
+      <li><strong>Related Membership:</strong> {{ transaction.membership.get_member_type_display }}</li>
+    {% endif %}
+    {% if transaction.related_project %}
+      <li><strong>Related Project:</strong> {{ transaction.related_project }}</li>
+    {% endif %}
+  </ul>
+  <a href="{% url 'wallet-overview' %}">← Back to Wallet</a>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "user/dashboard.html" %}
+{% load static %}
+
+{% block main_content %}
+<div class="wallet-card">
+  <h3>✅ Transaction Confirmation</h3>
+  <ul class="list-unstyled">
+    <li><strong>Type:</strong> {{ transaction.get_type_display }}</li>
+    <li><strong>Amount:</strong> {{ transaction.amount }} units</li>
+    <li><strong>Status:</strong> {{ transaction.get_status_display }}</li>
+    <li><strong>Method:</strong> {{ transaction.get_payment_method_display }}</li>
+    <li><strong>Date:</strong> {{ transaction.created_at|date:"Y-m-d H:i" }}</li>
+    {% if transaction.note %}
+      <li><strong>Note:</strong> {{ transaction.note }}</li>
+    {% endif %}
+    {% if transaction.related_project %}
+      <li><strong>Project:</strong> {{ transaction.related_project }}</li>
+    {% endif %}
+  </ul>
+  <div class="mt-4">
+    <a href="{% url 'wallet-overview' %}" class="btn btn-secondary">← Back to Wallet</a>
+  </div>
+</div>
+{% endblock %}

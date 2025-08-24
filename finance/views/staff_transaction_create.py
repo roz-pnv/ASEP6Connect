@@ -1,6 +1,8 @@
 import uuid
 import random
 
+from django.utils import timezone
+from datetime import timedelta
 from django.views import View
 from django.views.generic import DetailView
 from django.shortcuts import render, redirect, get_object_or_404
@@ -15,8 +17,8 @@ from finance.models.wallet import Wallet
 from finance.models.transaction import Transaction, TransactionStatus
 from finance.models.transaction import PaymentMethod
 from finance.models.transaction import TransactionStatus
-from users.models.board_of_director import BoardOfDirector, RoleType
-from finance.forms.transaction import (
+from users.models.membership import Membership
+from finance.forms.staff_transaction import (
     TransactionPurposeForm,
     TransactionMethodForm,
     TransactionExtraForm,
@@ -188,18 +190,15 @@ class TransactionCodeRequestView(LoginRequiredMixin, View):
         request.session["transaction_id"] = transaction.pk
         verification_code = random.randint(100000, 999999)
         request.session["verification_code"] = verification_code
-
-        print(f"[DEBUG] Verification code for {request.user.email}: {verification_code}")
-
     
         # Send via email
-        # send_mail(
-        #     'Your Verification Code',
-        #     f'Your verification code is: {verification_code}',
-        #     settings.EMAIL_HOST_USER,
-        #     [request.user.email],
-        #     fail_silently=False
-        # )
+        send_mail(
+            'Your Verification Code',
+            f'Your verification code is: {verification_code}',
+            settings.EMAIL_HOST_USER,
+            [request.user.email],
+            fail_silently=False
+        )
 
         messages.success(request, "Verification code sent successfully.")
         return redirect(reverse("transaction-online-verify", kwargs={"transaction_id": transaction.pk}))
@@ -243,3 +242,34 @@ class TransactionConfirmationView(LoginRequiredMixin, DetailView):
     context_object_name = 'transaction'
     pk_url_kwarg = 'transaction_id'
 
+
+class CreatePendingTransactionView(LoginRequiredMixin, View):
+    def post(self, request, wallet_id):
+        wallet = get_object_or_404(Wallet, id=wallet_id)
+        latest_membership = Membership.objects.filter(user=wallet.user).order_by('-created_at').first()
+
+        if latest_membership and not latest_membership.is_confirmed:
+            amount = latest_membership.required_payment
+            expires_at = timezone.now() + timedelta(days=90)
+
+            Transaction.objects.create(
+                wallet=wallet,
+                membership=latest_membership,
+                type='membership_fee',
+                amount=amount,
+                status=TransactionStatus.PENDING,
+                payment_method=PaymentMethod.ONLINE,
+                expires_at=expires_at,
+                note=(
+                    "Dear member, your membership request is pending. "
+                    "Please complete the payment of your annual membership fee "
+                    f"({amount:,} Toman) within 3 months to activate your membership. "
+                    "This transaction was initiated by the treasurer."
+                )
+            )
+
+            messages.success(request, "Pending transaction created successfully.")
+        else:
+            messages.warning(request, "No pending membership found or already confirmed.")
+
+        return redirect("admin_wallet_detail", wallet_id=wallet.id)

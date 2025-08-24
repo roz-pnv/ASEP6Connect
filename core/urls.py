@@ -22,6 +22,7 @@ urlpatterns = [
 
 	path('meeting/', include('meetings.urls.meeting')), 
 
-	path('finance/', include('finance.urls.wallet')), 
+	path('finance/wallet/', include('finance.urls.wallet')), 
+	path('finance/transaction/', include('finance.urls.transaction')), 
 	path('staff/finance/', include('finance.urls.staff_panel')), 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

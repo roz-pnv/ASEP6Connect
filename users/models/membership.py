@@ -74,3 +74,15 @@ class Membership(models.Model):
     def is_expired(self):
         """Check if the membership has expired."""
         return self.membership_expiry and self.membership_expiry < date.today()
+    
+    @property
+    def required_payment(self):
+        euro_to_toman = 50000 
+        payment_map_euro = {
+            'main': 15,
+            'associate': 8,
+            'volunteer': 0,
+            'honorary': 0,
+        }
+        euro_amount = payment_map_euro.get(self.member_type, 0)
+        return euro_amount * euro_to_toman

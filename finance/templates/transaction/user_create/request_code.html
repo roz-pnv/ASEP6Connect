@@ -1,0 +1,16 @@
+{% extends "user/dashboard.html" %}
+{% load static %}
+
+{% block main_content %}
+<div class="wallet-card">
+  <h3>📩 Request Verification Code</h3>
+  <p>Click below to receive your verification code via email.</p>
+  <form method="post">
+    {% csrf_token %}
+    <div class="d-flex justify-content-between mt-3">
+      <a href="{% url 'user-transaction-method' %}" class="btn btn-secondary">← Back</a>
+      <button type="submit" class="btn btn-info">Send Code →</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

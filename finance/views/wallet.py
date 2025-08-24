@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from finance.models.wallet import Wallet
 from finance.models.transaction import Transaction
 from finance.models.transaction import TransactionType
+from finance.models.transaction import TransactionStatus
 
 class WalletDetailView(LoginRequiredMixin, TemplateView):
     template_name = "wallet/detail.html"
@@ -15,11 +16,15 @@ class WalletDetailView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-
-        wallet = Wallet.objects.filter(user=user).first()
-        transactions = Transaction.objects.filter(wallet__user=user).order_by('-created_at')[:5]
         
+        wallet = Wallet.objects.filter(user=user).first()
+        transactions = Transaction.objects.filter(
+			wallet__user=user,
+			status__in=[TransactionStatus.SUCCESS, TransactionStatus.FAILED]
+		).order_by('-created_at')[:5]
+				
         upcoming_tx_list = Transaction.objects.filter(
+			wallet__user=user,  
 			type=TransactionType.MEMBERSHIP_FEE,
 			status__in=["pending", "failed"],
 			created_at__gte=timezone.now() - timezone.timedelta(days=30),
@@ -29,7 +34,7 @@ class WalletDetailView(LoginRequiredMixin, TemplateView):
         
         context.update({
             "wallet": wallet,
-            "recent_transactions": transactions,
+            "transactions": transactions,
             "membership_url": "/membership/pay/",
             "donation_url": "/donate/",
             "transactions_url": "/finance/transactions/",
@@ -37,3 +42,4 @@ class WalletDetailView(LoginRequiredMixin, TemplateView):
         })
 
         return context
+    

@@ -122,6 +122,10 @@ class WalletDetailAdminView(BoardRoleContextMixin, UserPassesTestMixin, Template
                 
         memberships = Membership.objects.filter(user=wallet.user).order_by("-created_at")
         latest_membership = memberships.first()
+        has_transaction = Transaction.objects.filter(
+            membership=latest_membership,
+            type='membership_fee'
+        ).exists()
         
         context.update({
 			"wallet": wallet,
@@ -129,6 +133,7 @@ class WalletDetailAdminView(BoardRoleContextMixin, UserPassesTestMixin, Template
 			"filter_form": form,
 			"memberships": memberships,
 			"latest_membership": latest_membership,
+            "has_transaction": has_transaction,
 		})
         
         return context

@@ -1,0 +1,16 @@
+{% extends "user/dashboard.html" %}
+{% load static %}
+
+{% block main_content %}
+<div class="wallet-card">
+  <h3>💳 Payment Method & Amount</h3>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="d-flex justify-content-between mt-3">
+      <a href="{% url 'user-transaction-purpose' %}" class="btn btn-secondary">← Back</a>
+      <button type="submit" class="btn btn-success">Next →</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

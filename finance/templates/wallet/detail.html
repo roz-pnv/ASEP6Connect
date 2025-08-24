@@ -17,15 +17,17 @@
     <div class="card-header-flex">
       <h3>⚡ Quick Actions</h3>
       <div class="action-buttons">
-        <a href="{{ membership_url }}" class="btn btn-purple">💳 Pay Membership</a>
-        <a href="{{ donation_url }}" class="btn btn-purple">🎁 Donate</a>
+        <a href="{% url 'user-transaction-purpose' %}?action=membership" class="btn btn-purple">💳 Pay Membership</a>
+        <a href="{% url 'user-transaction-purpose' %}?action=donate" class="btn btn-purple">🎁 Donate</a>
+        <a href="{% url 'user-transaction-purpose' %}?action=deposit" class="btn btn-purple">➕ Deposit</a>
+        <a href="{% url 'user-transaction-purpose' %}?action=withdraw" class="btn btn-purple">➖ Withdraw</a>
       </div>
     </div>
   </div>
 
   <!-- Transactions Card -->
   <div class="wallet-card transactions-card">
-    <h3>🧾 Recent Transactions</h3>
+    <h3>🧾 All Transactions</h3>
     <table class="transaction-table">
       <thead>
         <tr>
@@ -33,14 +35,15 @@
           <th>Type</th>
           <th>Amount</th>
           <th>Status</th>
-		  <th>Method</th>
+		      <th>Method</th>
           <th>Date</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
-        {% for tx in recent_transactions %}
+        {% for tx in transactions %}
           <tr>
-			<td>{{ forloop.counter }}</td>
+			      <td>{{ forloop.counter }}</td>
             <td>{{ tx.get_type_display }}</td>
             <td>{{ tx.amount }}</td>
             <td>
@@ -48,8 +51,13 @@
                 {{ tx.get_status_display }}
               </span>
             </td>
-			<td>{{ tx.get_payment_method_display }}</td>
+            <td>{{ tx.get_payment_method_display }}</td>
             <td>{{ tx.created_at|date:"Y-m-d H:i" }}</td>
+            <td>
+              <a href="{% url 'transaction_detail' transaction_id=tx.id %}" class="btn btn-sm btn-outline-primary">
+                🔍 Details
+              </a>
+            </td>
           </tr>
         {% empty %}
           <tr>
@@ -70,6 +78,7 @@
 		  <th>#</th>
           <th>Amount</th>
           <th>Status</th>
+          <th>Type</th>
           <th>Date</th>
           <th>Action</th>
         </tr>
@@ -77,16 +86,20 @@
       <tbody>
         {% for tx in upcoming_tx_list %}
           <tr>
-			<td>{{ forloop.counter }}</td>
+			      <td>{{ forloop.counter }}</td>
             <td>{{ tx.amount }} units</td>
             <td>
               <span class="badge {% if tx.status == 'success' %}bg-purple{% elif tx.status == 'failed' %}bg-pink{% else %}bg-violet{% endif %}">
                 {{ tx.get_status_display }}
               </span>
             </td>
+            <td>{{ tx.get_type_display }}</td>
             <td>{{ tx.created_at|date:"Y-m-d H:i" }}</td>
             <td>
-              <a href="{{ membership_url }}" class="btn btn-warning btn-sm">💳 Pay</a>
+              <a href="{% url 'user-transaction-purpose' %}?action=pay&tx_id={{ tx.id }}" class="btn btn-warning btn-sm">💳 Pay</a>
+              <a href="{% url 'transaction_detail' transaction_id=tx.id %}" class="btn btn-sm btn-outline-primary">
+                🔍 Details
+              </a>
             </td>
           </tr>
         {% endfor %}
